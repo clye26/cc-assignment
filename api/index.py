@@ -93,20 +93,14 @@ def get_cars():
         "cars": cars
     }
 
+"""
+August 22, 2026 | 3:22PM
 
-# GET ONE CAR
-@app.get("/cars/{car_id}")
-def get_car(car_id: int):
+- If Car ID is the first rule, it will take everything even a string like "search" and treat it as a "int" (car ID).
+- If Search is the first rule, it checks first if its a "search query" then moves on the Car ID rule to check if its a "int" (car ID) thus displaying the correct result.
+    - If the user automatically types "/cars/1/" in the URL with respect to Search first rule, it skips the search entirely and proceeds to the Car ID rule.
 
-    for car in cars:
-
-        if car["id"] == car_id:
-            return car
-
-    raise HTTPException(
-        status_code=404,
-        detail="Car not found."
-    )
+"""
 
 # SEARCH CARS
 @app.get("/cars/search")
@@ -129,3 +123,17 @@ def search_cars( q: str = Query(..., min_length=1)):
         "count": len(results),
         "results": results
     }
+
+# GET ONE CAR
+@app.get("/cars/{car_id}")
+def get_car(car_id: int):
+
+    for car in cars:
+
+        if car["id"] == car_id:
+            return car
+
+    raise HTTPException(
+        status_code=404,
+        detail="Car not found."
+    )
