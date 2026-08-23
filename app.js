@@ -1,84 +1,90 @@
-const API_URL = "https://cc-assignment-kappa.vercel.app";
+const API_URL = "https://cc-assignment-kappa.vercel.app"; 
+
+// https://cc-assignment-kappa.vercel.app - vercel deployment for github
+// http://127.0.0.1:8000 - localhost
 
 
-// GET ALL CARS
-async function loadCars() {
+// GET ALL TOYS
+async function loadToys() {
     try {
-        const response = await fetch(`${API_URL}/cars`);
+        const response = await fetch(`${API_URL}/toys`);
         const data = await response.json();
-        displayCars(data.cars);
+        displayToys(data.toys);
     }
 
     catch (error) {
         console.error(error);
-        document.getElementById("carList").innerHTML = "Unable to connect to the API.";
+        document.getElementById("toyList").innerHTML = "Unable to connect to the API.";
     }
 }
 
 
-// DISPLAY CARS
-function displayCars(cars) {
-    const carList =
-        document.getElementById("carList");
+// DISPLAY TOYS
+function displayToys(toys) {
+    const toyList = document.getElementById("toyList");
+    toyList.innerHTML = "";
 
-    carList.innerHTML = "";
+    // Check if the Toy list is empty, if the toy does not exit, an error message will be displayed to the user.
+    if (!toys || toys.length === 0) {
+        toyList.innerHTML = `
+            <div class="no-toys-message" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">
+                <h3>Oops! That toy must be hiding in the toy box. Let's try another search!</h3>
+            </div>
+        `;
+        return;
+    }
 
-    cars.forEach(car => {
+    toys.forEach(toy => {
         const card = document.createElement("div");
-        card.className = "car-card";
+        card.className = "toy-card"; 
         card.innerHTML = `
-            <div class="car-year">${car.year}</div>
-            <h3>${car.make} ${car.model}</h3>
-            <p class="car-engine">${car.engine}</p>
-            <p>${car.horsepower} horsepower/p>
-            <p>${car.description}</p>
-            <button onclick="viewCar(${car.id})"> View Details</button>
+            <!-- Added Image Tag Here -->
+            <img src="${toy.image}" alt="${toy.title}" class="toy-thumbnail" style="width:100%; height:150px; object-fit:cover; border-radius:4px; margin-bottom:10px;">
+            
+            <div class="car-year">${toy.year} - ${toy.genre}</div>
+            <h3>${toy.title}</h3>
+            <p class="car-engine">${toy.brand} | Stock: ${toy.stock}</p>
+            <p>₱${toy.price.toFixed(2)}</p>
+            <button onclick="viewToy(${toy.id})">View Details</button>
         `;
 
-        carList.appendChild(card);
+        toyList.appendChild(card);
     });
-
 }
 
-// GET ONE CAR
-async function viewCar(id) {
-
+// GET ONE TOY
+async function viewToy(id) {
     try {
-        const response = await fetch(`${API_URL}/cars/${id}`);
-        const car = await response.json();
+        const response = await fetch(`${API_URL}/toys/${id}`);
+        const toy = await response.json();
 
         alert(`
-            ${car.year} ${car.make} ${car.model}
-            Engine:
-            ${car.engine}
-
-            Horsepower:
-            ${car.horsepower}
-
-            Description:
-            ${car.description}
+            ${toy.title} (${toy.year})
+            Brand: ${toy.brand}
+            Genre: ${toy.genre}
+            Price: ₱${toy.price.toFixed(2)}
+            Stock Remaining: ${toy.stock}
         `);
     }
     catch (error) {
         console.error(error);
-        alert("Unable to retrieve car.");
+        alert("Unable to retrieve Toy.");
     }
-
 }
 
 // SEARCH
-async function searchCars() {
+async function searchToys() {
 
     const query = document.getElementById("searchInput").value;
     if (!query) {
-        loadCars();
+        loadToys();
         return;
     }
     try {
         const response =
-            await fetch(`${API_URL}/cars/search?q=${encodeURIComponent(query)}`);
+            await fetch(`${API_URL}/toys/search?q=${encodeURIComponent(query)}`);
         const data = await response.json();
-        displayCars(data.results);
+        displayToys(data.results);
     }
 
     catch (error) {
@@ -87,4 +93,4 @@ async function searchCars() {
     }
 }
 
-loadCars();
+loadToys();

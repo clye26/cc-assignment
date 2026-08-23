@@ -2,8 +2,8 @@ from fastapi import FastAPI, HTTPException, Header, Query
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
-    title="Simple Car API",
-    description="A beginner-friendly REST API containing information about cars.",
+    title="Clyde's Toy Corner",
+    description="The Clyde's Toy Corner Store utilizing FastAPI to provide a simple API for toy enthusiasts.",
     version="1.0.0"
 )
 
@@ -15,59 +15,130 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# CAR DATA
-cars = [
+# TOYS DATA
+toys = [
 
     {
-        "id": 1,
-        "make": "Toyota",
-        "model": "Corolla",
-        "year": 1998,
-        "engine": "1.6L 4-cylinder",
-        "horsepower": 105,
-        "description": "A practical and reliable compact sedan."
-    },
 
+	    "id": 1,
+	    "title": "LEGO Creator Expert 10246 Detective's Office",
+	    "brand": "LEGO",
+	    "year": 2015,
+	    "genre": "Building Blocks",
+	    "price": 35000.00,
+	    "stock": 2,
+	    "image": "images/lego_detecivesoffice.jpg" 
+    },
     {
         "id": 2,
-        "make": "Honda",
-        "model": "Civic Si",
-        "year": 1999,
-        "engine": "1.6L 4-cylinder",
-        "horsepower": 160,
-        "description": "A sporty compact car popular with enthusiasts."
+        "title": "LEGO City 60409 Yellow Mobile Construction Crane",
+        "brand": "LEGO",
+        "year": 2024,
+        "genre": "Building Blocks",
+        "price": 7190.00,
+        "stock": 10,
+        "image": "images/lego_crane.jpg"
     },
-
     {
         "id": 3,
-        "make": "Mitsubishi",
-        "model": "Eclipse GSX",
-        "year": 1999,
-        "engine": "2.0L Turbo 4-cylinder",
-        "horsepower": 210,
-        "description": "A turbocharged AWD coupe built for performance."
+        "title": "LEGO City 60420 Construction Excavator",
+        "brand": "LEGO",
+        "year": 2024,
+        "genre": "Building Blocks",
+        "price": 4500.00,
+        "stock": 15,
+        "image": "images/lego_excavator.jpg"
     },
-
     {
         "id": 4,
-        "make": "Subaru",
-        "model": "Impreza WRX",
-        "year": 2002,
-        "engine": "2.0L Turbo 4-cylinder",
-        "horsepower": 227,
-        "description": "A turbocharged AWD performance sedan."
+        "title": "LEGO City 60492 Passenger Jet",
+        "brand": "LEGO",
+        "year": 2026,
+        "genre": "Building Blocks",
+        "price": 2500.00,
+        "stock": 20,
+        "image": "images/lego_jet.jpg"
     },
-
     {
         "id": 5,
-        "make": "Mazda",
-        "model": "MX-5 Miata",
-        "year": 2001,
-        "engine": "1.8L 4-cylinder",
-        "horsepower": 142,
-        "description": "A lightweight two-seat roadster famous for its handling."
+        "title": "Lego Star Wars 75419 Death Star",
+        "brand": "LEGO",
+        "year": 2025,
+        "genre": "Building Blocks",
+        "price": 72999.00,
+        "stock": 3,
+        "image": "images/lego_deathstar.jpg"
+    },
+    {
+        "id": 6,
+        "title": "PG Unleashed RX-78-2 Gundam",
+        "brand": "Bandai",
+        "year": 2020,
+        "genre": "Mecha Model Kits",
+        "price": 16000.00,
+        "stock": 5,
+        "image": "images/pg_unleashed.jpg"
+    },
+    {
+        "id": 7,
+        "title": "PG Unicorn Gundam",
+        "brand": "Bandai",
+        "year": 2014,
+        "genre": "Mecha Model Kits",
+        "price": 12800.00,
+        "stock": 6,
+        "image": "images/pg_unicorn.jpg"
+    },
+    {
+        "id": 8,
+        "title": "PG Zeta Gundam",
+        "brand": "Bandai",
+        "year": 2000,
+        "genre": "Mecha Model Kits",
+        "price": 11000.00,
+        "stock": 4,
+        "image": "images/pg_zeta.jpg"
+    },
+    {
+        "id": 9,
+        "title": "Tung Tung Sahur",
+        "brand": "Brainrot Corporation",
+        "year": 2024,
+        "genre": "Novelty Toys",
+        "price": 350.00,
+        "stock": 30,
+        "image": "images/tung_tung.jpg"
+    },
+    {
+        "id": 10,
+        "title": "Tomica Premium No. 10 Toyota Crown Police Car",
+        "brand": "Takara Tomy",
+        "year": 2024,
+        "genre": "Diecast Cars",
+        "price": 550.00,
+        "stock": 25,
+        "image": "images/tomica_crown.jpg"
+    },
+    {
+        "id": 11,
+        "title": "Tomica PREMIUM unlimited 01 INITIAL D AE86 (FUJIWARA TAKUMI)",
+        "brand": "Takara Tomy",
+        "year": 2021,
+        "genre": "Diecast Cars",
+        "price": 850.00,
+        "stock": 12,
+        "image": "images/tomica_ae86.jpg"
+    },
+    {
+        "id": 12,
+        "title": "Colers the Penguin",
+        "brand": "Albay Corp.",
+        "year": 2006,
+        "genre": "Soft Toys",
+        "price": 1721.00,
+        "stock": 1,
+        "image": "images/colers_penguin.jpg"
     }
-
 ]
 
 # HOME
@@ -75,22 +146,22 @@ cars = [
 def home():
 
     return {
-        "message": "Welcome to the Simple Car API!",
+        "message": "Welcome to Clyde's Toy Corner API!",
         "endpoints": [
-            "/cars",
-            "/cars/{id}",
-            "/cars/search"
+            "/toys",
+            "/toys/{id}",
+            "/toys/search"
         ]
     }
 
 
-# GET ALL CARS
-@app.get("/cars")
-def get_cars():
+# GET ALL TOYS
+@app.get("/toys")
+def get_toys():
 
     return {
-        "count": len(cars),
-        "cars": cars
+        "count": len(toys),
+        "toys": toys
     }
 
 """
@@ -100,23 +171,27 @@ August 22, 2026 | 3:22PM
 - If Search is the first rule, it checks first if its a "search query" then moves on the Car ID rule to check if its a "int" (car ID) thus displaying the correct result.
     - If the user automatically types "/cars/1/" in the URL with respect to Search first rule, it skips the search entirely and proceeds to the Car ID rule.
 
+August 23, 2026 | 9:42PM:
+
+- Changed the overall theme to "Toys".
+    
 """
 
-# SEARCH CARS
-@app.get("/cars/search")
-def search_cars( q: str = Query(..., min_length=1)):
+# SEARCH TOYS
+@app.get("/toys/search")
+def search_toys( q: str = Query(..., min_length=1)):
     q = q.lower()
     results = []
-    for car in cars:
+    for toy in toys:
         searchable_text = (
-            f"{car['make']} "
-            f"{car['model']} "
-            f"{car['year']} "
-            f"{car['engine']}"
+            f"{toy['title']} "
+            f"{toy['brand']} "
+            f"{toy['year']} "
+            f"{toy['genre']}"
         ).lower()
 
         if q in searchable_text:
-            results.append(car)
+            results.append(toy)
 
     return {
         "query": q,
@@ -124,16 +199,16 @@ def search_cars( q: str = Query(..., min_length=1)):
         "results": results
     }
 
-# GET ONE CAR
-@app.get("/cars/{car_id}")
-def get_car(car_id: int):
+# GET ONE TOY
+@app.get("/toys/{toy_id}")
+def get_toy(toy_id: int):
 
-    for car in cars:
+    for toy in toys:
 
-        if car["id"] == car_id:
-            return car
+        if toy["id"] == toy_id:
+            return toy
 
     raise HTTPException(
         status_code=404,
-        detail="Car not found."
+        detail="Oops! That toy must be hiding in the toy box. Let's try another search!"
     )
