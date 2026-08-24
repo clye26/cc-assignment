@@ -38,39 +38,23 @@
         </div>
     </header>
 
-    <!-- CAROUSEL BANNER -->
-    <section class="carousel-section" id="carouselBanner">
-        <div class="carousel-dots">
-            <span class="dot active" onclick="changeSlide(0)"></span>
-            <span class="dot" onclick="changeSlide(1)"></span>
-            <span class="dot" onclick="changeSlide(2)"></span>
+    <!-- DETAILS CONTAINER -->
+    <main class="details-container">
+        <div id="toyDetails" class="toy-details-wrapper">
+            <p>Loading toy details...</p>
         </div>
-    </section>
+    </main>
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <!-- Search Header -->
-        <div class="section-header">
-            <h2 id="sectionTitle">Toys</h2>
-            <p id="resultsCount" class="results-count"></p>
-                <!-- Show All Toys Button -->
-                <button id="showAllBtn" class="secondary show-all-inline-btn" style="display: none;" onclick="loadToys()">Show all Toys</button>
-        </div>
-
-    <!-- 4-ITEM GRID LAYOUT -->
-    <section>
-        <div id="toyList" class="toy-grid">
-            Loading toys...
-        </div>
-    </section>
-</main>
+    <script src="app.js"></script>
+    <script>
+        // Automatically fetch details when this page loads
+        fetchToyDetails();
+    </script>
 
     <!-- FOOTER -->
     <footer>
         <img src="images/nav_logo.png" alt="Clyde's Toy Shop Logo" class="brand-logo-img">
         <p>&copy; 2026 Clyde's Toy Shop. All rights reserved.</p>
     </footer>
-
-    <script src="app.js"></script>
 </body>
 </html>

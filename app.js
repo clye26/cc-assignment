@@ -9,88 +9,251 @@ async function loadToys() {
     try {
         const response = await fetch(`${API_URL}/toys`);
         const data = await response.json();
+        
+        // Show Carousel Images when "Show All Toys"/Home
+        document.getElementById("carouselBanner").style.display = "flex";
+        document.getElementById("showAllBtn").style.display = "none";
+        
+        document.getElementById("sectionTitle").innerText = "All Toys";
+        document.getElementById("resultsCount").innerText = `Showing ${data.toys.length} results`;
+        
         displayToys(data.toys);
-    }
-
-    catch (error) {
+    } catch (error) {
         console.error(error);
-        document.getElementById("toyList").innerHTML = "Unable to connect to the API.";
+        document.getElementById("toyList").innerHTML = "Oops! Unable to connect to the Toy API Train Station.";
     }
 }
 
-
-// DISPLAY TOYS
+// DISPLAY TOYS IN A 4-ITEM GRID
 function displayToys(toys) {
     const toyList = document.getElementById("toyList");
     toyList.innerHTML = "";
 
-    // Check if the Toy list is empty, if the toy does not exit, an error message will be displayed to the user.
+    // Check if the Toy list is empty, if the toy does not exist, an error message will be displayed to the user.
     if (!toys || toys.length === 0) {
         toyList.innerHTML = `
             <div class="no-toys-message" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">
+                <img src="images/errorsearch.png" alt="No toys found!" style="height: 200px; width: 390px; margin-bottom: 2px;">
                 <h3>Oops! That toy must be hiding in the toy box. Let's try another search!</h3>
             </div>
         `;
         return;
     }
 
+    // TOY CARD TEMPLATE
     toys.forEach(toy => {
         const card = document.createElement("div");
-        card.className = "toy-card"; 
+        card.className = "toy-card";
+
+        // --- CHANGED FROM HERE ---
         card.innerHTML = `
-            <!-- Added Image Tag Here -->
-            <img src="${toy.image}" alt="${toy.title}" class="toy-thumbnail" style="width:100%; height:150px; object-fit:cover; border-radius:4px; margin-bottom:10px;">
-            
-            <div class="car-year">${toy.year} - ${toy.genre}</div>
+            <img src="${toy.image}" alt="${toy.title}" class="toy-card-img">
             <h3>${toy.title}</h3>
-            <p class="car-engine">${toy.brand} | Stock: ${toy.stock}</p>
-            <p>₱${toy.price.toFixed(2)}</p>
-            <button onclick="viewToy(${toy.id})">View Details</button>
+            <p class="toy-brand">${toy.brand}</p>
+            <p class="toy-price">₱${toy.price.toFixed(2)}</p>
+            <button class="add-to-bag-btn">Add to Cart</button>
         `;
+
+        // Clicking the card body goes to details
+        card.addEventListener("click", () => {
+            viewToy(toy.id);
+        });
+
+        // Clicking the Add to Cart button prevents card redirection
+        const addBtn = card.querySelector(".add-to-bag-btn");
+        addBtn.addEventListener("click", (event) => {
+            event.stopPropagation();
+            alert(`Added ${toy.title} to cart!`);
+        });
+        // --- TO HERE ---
 
         toyList.appendChild(card);
     });
 }
 
-// GET ONE TOY
-async function viewToy(id) {
+// REDIRECT TO DETAILS PAGE
+function viewToy(id) {
+    window.location.href = `details.html?id=${id}`;
+}
+
+// FETCH AND DISPLAY SINGLE TOY DETAILS
+async function fetchToyDetails() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const toyId = urlParams.get("id");
+    const container = document.getElementById("toyDetails");
+
+    if (!toyId) {
+        container.innerHTML = "<p>No toy selected. <a href='index.html'>Back to Home</a></p>";
+        return;
+    }
+
     try {
-        const response = await fetch(`${API_URL}/toys/${id}`);
+        const response = await fetch(`${API_URL}/toys/${toyId}`);
+        if (!response.ok) throw new Error("Toy not found");
+        
         const toy = await response.json();
 
-        alert(`
-            ${toy.title} (${toy.year})
-            Brand: ${toy.brand}
-            Genre: ${toy.genre}
-            Price: ₱${toy.price.toFixed(2)}
-            Stock Remaining: ${toy.stock}
-        `);
-    }
-    catch (error) {
+        container.innerHTML = `
+            <div class="details-image-section">
+                <img src="${toy.image}" alt="${toy.title}" class="main-detail-img">
+            </div>
+
+            <div class="detail-info-container">
+                <h1>${toy.title}</h1>
+                
+                <div class="detail-brand-year-genre">
+                    <p><strong>Brand:</strong> ${toy.brand}</p>
+                    <p><strong>Year:</strong> ${toy.year}</p>
+                    <p><strong>Genre:</strong> ${toy.genre}</p>
+                </div>
+                
+                <div class="detail-price-stock">
+                    <p class="detail-price">Price: <span class="price-value">₱${toy.price.toFixed(2)}</span></p>
+                    <p class="stock-status">Stock: <span class="stock-value">${toy.stock} available</span></p>
+                </div>
+
+                <div class="quantity-selector-container">
+                    <span class="qty-label">Quantity:</span>
+                    <div class="qty-controls">
+                        <button type="button" class="qty-btn" id="decreaseQtyBtn">-</button>
+                        <input type="text" id="qtyInput" class="qty-input" value="1" readonly>
+                        <button type="button" class="qty-btn" id="increaseQtyBtn">+</button>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="add-to-bag-btn" id="detailAddBtn">Add to cart</button>
+                    <button class="wishlist-btn" id="detailWishlistBtn">Add to Wishlist</button>
+                </div>
+            </div>
+        `;
+
+        // Event Listeners for Quantity and Action Buttons
+        document.getElementById("increaseQtyBtn").addEventListener("click", () => {
+            increaseQty(toy.stock);
+        });
+
+        document.getElementById("decreaseQtyBtn").addEventListener("click", () => {
+            decreaseQty();
+        });
+
+        // Event Listerners for catching apostrophes/special characters title errors
+        document.getElementById("detailAddBtn").addEventListener("click", () => {
+            const qty = document.getElementById("qtyInput").value;
+            alert("Added " + qty + " x " + toy.title + " to cart!");
+        });
+
+        document.getElementById("detailWishlistBtn").addEventListener("click", () => {
+            alert("Added " + toy.title + " to Wishlist!");
+        });
+
+    } catch (error) {
         console.error(error);
-        alert("Unable to retrieve Toy.");
+        container.innerHTML = "<p>Oops! Unable to retrieve the Toy details. <a href='index.html'>Back to Home</a></p>";
     }
 }
 
-// SEARCH
-async function searchToys() {
+// Quantity Functions
+function increaseQty(maxStock) {
+    const qtyInput = document.getElementById("qtyInput");
+    let currentQty = parseInt(qtyInput.value);
+    if (currentQty < maxStock) {
+        qtyInput.value = currentQty + 1;
+    }
+}
 
-    const query = document.getElementById("searchInput").value;
+function decreaseQty() {
+    const qtyInput = document.getElementById("qtyInput");
+    let currentQty = parseInt(qtyInput.value);
+    if (currentQty > 1) {
+        qtyInput.value = currentQty - 1;
+    }
+}
+
+// SEARCH TOYS
+async function searchToys() {
+    const searchInput = document.getElementById("searchInput");
+    if (!searchInput) return;
+    
+    const query = searchInput.value.trim();
+    
+    // If we are currently on details.html, redirect back to index.html with the search query
+    if (window.location.pathname.includes("details.html")) {
+        window.location.href = `index.html?search=${encodeURIComponent(query)}`;
+        return;
+    }
+
     if (!query) {
         loadToys();
         return;
     }
-    try {
-        const response =
-            await fetch(`${API_URL}/toys/search?q=${encodeURIComponent(query)}`);
-        const data = await response.json();
-        displayToys(data.results);
-    }
 
-    catch (error) {
+    try {
+        const response = await fetch(`${API_URL}/toys/search?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        
+        // Hide Carousel Images and show the "Show all Toys" button
+        const banner = document.getElementById("carouselBanner");
+        if (banner) banner.style.display = "none";
+        
+        const showAllBtn = document.getElementById("showAllBtn");
+        if (showAllBtn) showAllBtn.style.display = "inline-block";
+        
+        const sectionTitle = document.getElementById("sectionTitle");
+        if (sectionTitle) sectionTitle.innerText = `Products for "${query}"`;
+        
+        const resultsCount = document.getElementById("resultsCount");
+        if (resultsCount) resultsCount.innerText = `Showing ${data.count} results`;
+
+        displayToys(data.results);
+    } catch (error) {
         console.error(error);
         alert("Search failed.");
     }
 }
 
 loadToys();
+
+// CAROUSEL IMAGE 
+const slides = [
+    { image: "images/carousel1.png" },
+    { image: "images/carousel2.png" },
+    { image: "images/carousel3.png" }
+];
+
+let currentSlide = 0;
+
+function changeSlide(index) {
+    currentSlide = index;
+    updateCarousel();
+}
+
+function updateCarousel() {
+    const banner = document.getElementById("carouselBanner");
+    const dots = document.querySelectorAll(".dot");
+
+    banner.style.backgroundImage = `url('${slides[currentSlide].image}')`;
+
+    dots.forEach((dot, idx) => {
+        if (idx === currentSlide) {
+            dot.classList.add("active");
+        } else {
+            dot.classList.remove("active");
+        }
+    });
+}
+
+// AUTO-SWIPE
+setInterval(() => {
+    currentSlide = (currentSlide + 1) % slides.length;
+    updateCarousel();
+}, 5000);
+
+updateCarousel();
+
+const urlParams = new URLSearchParams(window.location.search);
+const searchQuery = urlParams.get("search");
+if (searchQuery && document.getElementById("searchInput")) {
+    document.getElementById("searchInput").value = searchQuery;
+    searchToys();
+}

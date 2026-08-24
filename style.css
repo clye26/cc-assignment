@@ -2,52 +2,192 @@
     box-sizing: border-box;
 }
 
-
 body {
     font-family: Arial, sans-serif;
     margin: 0;
-    background: #f4f4f4;
+    background: #e4e3e3;
     color: #222;
 }
 
-header {
-    background: #222;
+/* TOP NAVIGATION BAR */
+.navbar {
+    background: #060b58;
     color: white;
-    text-align: center;
-    padding: 40px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
-header h1 {
-    margin: 0;
+.brand-logo {
+    font-size: 20px;
+    font-weight: bold;
+    color: #ff9f1c;
 }
 
+.search-bar-container {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 6px;
+    overflow: hidden; 
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.search-bar-container input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 10px 15px;
+    font-size: 15px;
+    color: #333;
+    background: transparent;
+}
+
+.search-bar-container input::placeholder {
+    color: #999;
+}
+
+.search-icon-btn {
+    background: #ffa100; 
+    border: none;
+    outline: none;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: white;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    transition: background 0.2s;
+}
+
+.search-icon-btn:hover {
+    background: #a8670b;
+}
+
+/* SEARCH ERROR */
+.no-toys-message h3 {
+    font-size: 20px;
+    font-weight: lighter;
+    color: #3a3a3a;
+    margin-top: 10px;
+}
+
+.nav-right {
+    display: flex;
+    gap: 10px;
+}
+
+.nav-btn {
+    background: transparent;
+    border: transparent;
+    border-radius: 10px;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.6s ease, color 0.6s ease;
+}
+
+.nav-btn:hover {
+    background: #ffa100;
+    color: #222;
+    transition:cubic-bezier(1, 0, 0, 1)
+}
+
+.cart-btn:hover {
+    background: #e11717;
+}
+
+/* CAROUSEL BANNER */
+.carousel-section {
+    position: relative;
+    width: 100%;
+    height: 420px;               
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 20px;
+    
+    background-size: cover;        
+    background-position: center;   
+    background-repeat: no-repeat;
+    background-color: #ddd;      
+    
+    transition: background-image 0.5s ease-out;
+}
+.carousel-dots {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 8px 15px;
+    border-radius: 20px;
+}
+
+.dot {
+    height: 12px;
+    width: 12px;
+    background-color: rgba(255, 255, 255, 0.6);
+    border-radius: 50%;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.dot.active {
+    background-color: white;
+}
+
+/* MAIN CONTENT & HEADINGS */
 main {
-    max-width: 900px;
-    margin: 40px auto;
+    max-width: 1200px;
+    margin: 30px auto;
     padding: 0 20px;
 }
 
-.search {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
+.section-header {
+    margin-bottom: 20px;
 }
 
-.search input {
-    flex: 1;
-    padding: 12px;
-    font-size: 16px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.section-header h2 {
+    margin: 0;
+    font-size: 24px;
 }
 
+.results-count {
+    color: #666;
+    font-size: 14px;
+    margin: 5px 0 0 0;
+}
+
+#sectionTitle {
+    color: #1a1a1a; 
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.results-count {
+    color: #555555;
+    font-size: 14px;
+}
+
+/* --- BUTTONS --- */
 button {
-    padding: 12px 18px;
+    padding: 10px 15px;
     border: none;
     border-radius: 5px;
     background: #e63946;
     color: white;
     cursor: pointer;
+    font-weight: bold;
 }
 
 button:hover {
@@ -58,45 +198,258 @@ button.secondary {
     background: #555;
 }
 
-.car-list {
+button.secondary:hover {
+    background: #444;
+}
+
+.show-all-inline-btn {
+    margin-top: 12px;
+    font-size: 14px;
+    padding: 8px 16px;
+}
+
+/* 4 GRID LAYOUT*/
+.toy-grid {
     display: grid;
-    grid-template-columns:
-        repeat(auto-fit, minmax(250px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 20px;
 }
 
-.car-card {
+/* TOY CARD STYLING */
+.toy-card {
     background: white;
-    padding: 20px;
+    padding: 15px;
     border-radius: 8px;
-    box-shadow:
-        0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
 
-
-.car-card h3 {
-    margin-top: 0;
-}
-
-
-.car-year {
-    color: #e63946;
-    font-weight: bold;
-}
-
-
-.car-engine {
-    color: #666;
-}
-
-
-.car-card button {
-    margin-top: 10px;
+.toy-card-img {
     width: 100%;
+    height: 180px;           
+    object-fit: contain;     
+    background-color: #fff; 
+    margin-bottom: 10px;
 }
 
+.toy-card h3 {
+    margin: 8px 0;
+    font-size: 18px;
+}
+
+.toy-brand {
+    color: #6c757d;
+    font-size: 14px;
+    margin: 0 0 10px 0;
+}
+
+.toy-price {
+    font-size: 18px;
+    font-weight: bold;
+    color: #ff9f1c;
+    margin: 0 0 15px 0;
+}
+
+/* ADD TO BAG BUTTON */
+
+.add-to-bag-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: #e11717;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.add-to-bag-btn:hover {
+    background: #4e0303;
+}
+
+/* TOY DETAILS PAGE */
+.details-container {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+/* MAXIMIZED SCREEN */
+.toy-details-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    align-items: start;
+    background: #ffffff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+/* TOY IMAGE */
+.main-detail-img {
+    width: 100%;
+    height: 380px;
+    object-fit: contain;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+    border: 1px solid #eee;
+}
+
+/* TOY INFO */
+.detail-info-container h1 {
+    font-size: 26px;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+}
+
+.toy-brand {
+    color: #6c757d;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.detail-brand-year-genre {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.detail-price {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1a1a1a; 
+    margin: 15px 0;
+}
+
+.price-value {
+    color: #d32f2f; 
+}
+
+.stock-status {
+    font-size: 14px;
+    font-weight: bold;
+    color: #555;
+}
+
+.stock-value {
+    color: #2e7d32;
+    font-size: 14px;
+}
+
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+.action-buttons button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+}
+
+/* WISHLIST BUTTON */
+
+.wishlist-btn {
+    width: 100%;
+    margin-top: 10px;
+    background: #419af3;
+    color: white;
+    border: none;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.wishlist-btn:hover {
+    background: rgb(15, 84, 153);
+}
+
+/* QUANTITY SELECTOR STYLING */
+.quantity-selector-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.qty-label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.qty-controls {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ced4da;
+    border-radius: 6px;
+    overflow: hidden;
+    background: #f8f9fa;
+}
+
+.qty-btn {
+    background: #f1f3f5;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    color: #333;
+    transition: background 0.2s;
+}
+
+.qty-btn:hover {
+    background: #e2e6ea;
+}
+
+.qty-input {
+    width: 45px;
+    text-align: center;
+    border: none;
+    border-left: 1px solid #ced4da;
+    border-right: 1px solid #ced4da;
+    background: #ffffff;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 0;
+    color: #333;
+}
+
+@media (max-width: 768px) {
+    .toy-details-wrapper {
+        grid-template-columns: 1fr; /* Switches to a single responsive column */
+        gap: 20px;
+        padding: 20px;
+        margin: 15px;
+    }
+    
+    .main-detail-img {
+        height: 280px;
+    }
+}
+
+/* FOOTER SECTION */
 footer {
     text-align: center;
     padding: 30px;
-    color: #777;
+    color: #8f8f8f;
+    background: #060b58;
+    margin-top: 60px;
+    border-top: 1px solid #ddd;
 }

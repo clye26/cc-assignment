@@ -75,7 +75,7 @@ toys = [
         "brand": "Bandai",
         "year": 2020,
         "genre": "Mecha Model Kits",
-        "price": 16000.00,
+        "price": 7500.00,
         "stock": 5,
         "image": "images/pg_unleashed.jpg"
     },
@@ -85,7 +85,7 @@ toys = [
         "brand": "Bandai",
         "year": 2014,
         "genre": "Mecha Model Kits",
-        "price": 12800.00,
+        "price": 6500.00,
         "stock": 6,
         "image": "images/pg_unicorn.jpg"
     },
@@ -95,7 +95,7 @@ toys = [
         "brand": "Bandai",
         "year": 2000,
         "genre": "Mecha Model Kits",
-        "price": 11000.00,
+        "price": 6000.00,
         "stock": 4,
         "image": "images/pg_zeta.jpg"
     },
@@ -138,6 +138,16 @@ toys = [
         "price": 1721.00,
         "stock": 1,
         "image": "images/colers_penguin.jpg"
+    },
+    {
+        "id": 13,
+        "title": "Lego IT/Computer Science Student Minifigure",
+        "brand": "LEGO",
+        "year": 2026,
+        "genre": "Building Blocks",
+        "price": 70000.00,
+        "stock": 30,
+        "image": "images/lego_student.jpg"
     }
 ]
 
