@@ -150,16 +150,6 @@ toys = [
         "image": "images/lego_student.jpg"
 	},
     {
-        "id": 13,
-        "title": "LEGO IT/Computer Science Student Minifigure",
-        "brand": "LEGO",
-        "year": 2026,
-        "genre": "Building Blocks",
-        "price": 70000.00,
-        "stock": 30,
-        "image": "images/lego_student.jpg"
-    },
-    {
         "id": 14,
         "title": "Skibidi Toilet Deluxe Toilet RC",
         "brand": "Skibidi Toilet Corp.",
