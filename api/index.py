@@ -148,6 +148,86 @@ toys = [
         "price": 70000.00,
         "stock": 30,
         "image": "images/lego_student.jpg"
+	},
+    {
+        "id": 13,
+        "title": "LEGO IT/Computer Science Student Minifigure",
+        "brand": "LEGO",
+        "year": 2026,
+        "genre": "Building Blocks",
+        "price": 70000.00,
+        "stock": 30,
+        "image": "images/lego_student.jpg"
+    },
+    {
+        "id": 14,
+        "title": "Skibidi Toilet Deluxe Toilet RC",
+        "brand": "Skibidi Toilet Corp.",
+        "year": 2023,
+        "genre": "Novelty Toys",
+        "price": 2500.00,
+        "stock": 5,
+        "image": "images/skibidi.jpg"
+    },
+    {
+        "id": 15,
+        "title": "TOMICA No.79 Toyota HIMEDIC",
+        "brand": "Takara Tomy",
+        "year": 20,
+        "genre": "Diecast Cars",
+        "price": 550.00,
+        "stock": 20,
+        "image": "images/tomica_ambulance.jpg"
+    },
+    {
+        "id": 16,
+        "title": "LEGO Creator 31026: Bike Shop and Cafe",
+        "brand": "Lego",
+        "year": 2014,
+        "genre": "Building Blocks",
+        "price": 9000.00,
+        "stock": 4,
+        "image": "images/lego_bikeshop_cafe.jpg"
+    },
+    {
+        "id": 17,
+        "title": "LEGO City 4436 Patrol Car Forest Police",
+        "brand": "Lego",
+        "year": 2011,
+        "genre": "Building Blocks",
+        "price": 1200.00,
+        "stock": 26,
+        "image": "images/lego_forest_police.jpg"
+    },
+    {
+        "id": 18,
+        "title": "LEGO City 7236 City Police Car",
+        "brand": "Lego",
+        "year": 2005,
+        "genre": "Building Blocks",
+        "price": 1000.00,
+        "stock": 26,
+        "image": "images/lego_city_police.jpg"
+    },
+    {
+        "id": 19,
+        "title": "LEGO Movie 70802 Bad Cop's Pursuit",
+        "brand": "Lego",
+        "year": 2014,
+        "genre": "Building Blocks",
+        "price": 2650.00,
+        "stock": 26,
+        "image": "images/lego_emmet.jpg"
+    },
+    {
+        "id": 20,
+        "title": "LEGO City 60073 Service Truck",
+        "brand": "Lego",
+        "year": 2015,
+        "genre": "Building Blocks",
+        "price": 3200.00,
+        "stock": 5,
+        "image": "images/lego_service_truck.jpg"
     }
 ]
 
