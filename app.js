@@ -45,11 +45,13 @@ function displayToys(toys) {
         const card = document.createElement("div");
         card.className = "toy-card";
 
-        // --- CHANGED FROM HERE ---
         card.innerHTML = `
             <img src="${toy.image}" alt="${toy.title}" class="toy-card-img">
             <h3>${toy.title}</h3>
             <p class="toy-brand">${toy.brand}</p>
+            <div class="toy-card-star-rating">
+                ${renderCSSStars(toy.rating)}
+            </div>
             <p class="toy-price">₱${toy.price.toFixed(2)}</p>
             <button class="add-to-bag-btn">Add to Cart</button>
         `;
@@ -65,7 +67,6 @@ function displayToys(toys) {
             event.stopPropagation();
             alert(`Added ${toy.title} to cart!`);
         });
-        // --- TO HERE ---
 
         toyList.appendChild(card);
     });
@@ -74,6 +75,27 @@ function displayToys(toys) {
 // REDIRECT TO DETAILS PAGE
 function viewToy(id) {
     window.location.href = `details.html?id=${id}`;
+}
+
+// STARS FUNCTION FOR RATING
+function renderCSSStars(rating) {
+    const numRating = parseFloat(rating) || 0;
+    // Calculate the width percentage (e.g., 4.5 out of 5 = 90%)
+    const percentage = (numRating / 5) * 100;
+
+    /* 
+    Plots the background empty stars and overlays the filled stars based on the rating percentage.
+    If 90% is the ratinng, then 90% of the stars will be filled and 10% will be cut/empty (grey area visible).
+    */
+    return `
+        <div class="star-rating-container">
+            <div class="star-rating">
+                <div class="fill-stars" style="width: ${percentage}%;">★★★★★</div>
+                <div class="empty-stars">★★★★★</div>
+            </div>
+            <span class="rating-value">(${numRating.toFixed(1)} / 5)</span>
+        </div>
+    `;
 }
 
 // FETCH AND DISPLAY SINGLE TOY DETAILS
@@ -90,8 +112,9 @@ async function fetchToyDetails() {
     try {
         const response = await fetch(`${API_URL}/toys/${toyId}`);
         if (!response.ok) throw new Error("Toy not found");
-        
+
         const toy = await response.json();
+        const isOut = toy.stock === 0; // Check if out of stock
 
         container.innerHTML = `
             <div class="details-image-section">
@@ -100,29 +123,48 @@ async function fetchToyDetails() {
 
             <div class="detail-info-container">
                 <h1>${toy.title}</h1>
-                
+
                 <div class="detail-brand-year-genre">
+                    <p class="detail-rating">
+                        <strong>Rating:</strong> ${renderCSSStars(toy.rating)}
+                    </p>
                     <p><strong>Brand:</strong> ${toy.brand}</p>
                     <p><strong>Year:</strong> ${toy.year}</p>
                     <p><strong>Genre:</strong> ${toy.genre}</p>
                 </div>
-                
+
+                <div class="detail-agerange-measurements">
+                    <p><strong>Age Range:</strong> ${toy.age_range}</p>
+                    <p><strong>Dimensions:</strong> ${toy.dimensions}</p>
+                    <p><strong>Height:</strong> ${toy.height}</p>
+                    <p><strong>Weight:</strong> ${toy.weight}</p>
+                </div>
+
+                <div class="detail-description">
+                    <p><strong>Description:</strong><br>${toy.description}</p>
+                </div>
+
                 <div class="detail-price-stock">
                     <p class="detail-price">Price: <span class="price-value">₱${toy.price.toFixed(2)}</span></p>
-                    <p class="stock-status">Stock: <span class="stock-value">${toy.stock} available</span></p>
+                    <p class="stock-status">
+                        Stock: 
+                        <span class="stock-value${isOut ? 'out-of-stock' : ''}">${isOut ? 'Out of Stock' : `${toy.stock} available`}</span> 
+                    </p>
                 </div>
 
                 <div class="quantity-selector-container">
                     <span class="qty-label">Quantity:</span>
                     <div class="qty-controls">
-                        <button type="button" class="qty-btn" id="decreaseQtyBtn">-</button>
-                        <input type="text" id="qtyInput" class="qty-input" value="1" readonly>
-                        <button type="button" class="qty-btn" id="increaseQtyBtn">+</button>
+                        <button type="button" class="qty-btn" id="decreaseQtyBtn" ${isOut ? 'disabled' : ''}>-</button>
+                        <input type="text" id="qtyInput" class="qty-input" value="${isOut ? '0' : '1'}" readonly>
+                        <button type="button" class="qty-btn" id="increaseQtyBtn" ${isOut ? 'disabled' : ''}>+</button>
                     </div>
                 </div>
 
                 <div class="action-buttons">
-                    <button class="add-to-bag-btn" id="detailAddBtn">Add to cart</button>
+                    <button class="add-to-bag-btn" id="detailAddBtn" ${isOut ? 'disabled style="background-color: #ccc; cursor: not-allowed;"' : ''}>
+                        ${isOut ? 'Out of Stock' : 'Add to cart'}
+                    </button>
                     <button class="wishlist-btn" id="detailWishlistBtn">Add to Wishlist</button>
                 </div>
             </div>
@@ -137,7 +179,7 @@ async function fetchToyDetails() {
             decreaseQty();
         });
 
-        // Event Listerners for catching apostrophes/special characters title errors
+        // Event Listeners for catching apostrophes/special characters title errors
         document.getElementById("detailAddBtn").addEventListener("click", () => {
             const qty = document.getElementById("qtyInput").value;
             alert("Added " + qty + " x " + toy.title + " to cart!");
@@ -177,7 +219,7 @@ async function searchToys() {
     
     const query = searchInput.value.trim();
     
-    // If we are currently on details.html, redirect back to index.html with the search query
+    // If user is on Details page, redirect back to index.html with the search query
     if (window.location.pathname.includes("details.html")) {
         window.location.href = `index.html?search=${encodeURIComponent(query)}`;
         return;

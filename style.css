@@ -248,7 +248,7 @@ button.secondary:hover {
 .toy-price {
     font-size: 18px;
     font-weight: bold;
-    color: #ff9f1c;
+    color: #831e1e;
     margin: 0 0 15px 0;
 }
 
@@ -308,6 +308,57 @@ button.secondary:hover {
     margin-bottom: 8px;
 }
 
+/* CARD STARS */
+.toy-card-star-rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 8px;
+    margin-top: 4px;
+}
+
+/* DETAILS PAGE STARS */
+.detail-rating {
+    font-size: 14px;
+    color: #555;
+}
+
+.star-rating-container {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.rating-value {
+    font-size: 14px;
+    color: #555;
+}
+
+.star-rating {
+    unicode-bidi: bidi-override;
+    color: #a1a0a0; 
+    font-size: 18px;
+    position: relative;
+    display: inline-block;
+    line-height: 1;
+}
+
+.star-rating .fill-stars {
+    color: #ff9f1c; 
+    position: absolute;
+    z-index: 1;
+    display: block;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.star-rating .empty-stars {
+    display: block;
+    white-space: nowrap;
+}
+
 .toy-brand {
     color: #6c757d;
     font-size: 14px;
@@ -323,6 +374,18 @@ button.secondary:hover {
     margin-bottom: 15px;
 }
 
+.detail-agerange-measurements {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.detail-description {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 15px;
+}
+
 .detail-price {
     font-size: 24px;
     font-weight: bold;
@@ -331,7 +394,7 @@ button.secondary:hover {
 }
 
 .price-value {
-    color: #d32f2f; 
+    color: #831e1e; 
 }
 
 .stock-status {
@@ -343,6 +406,10 @@ button.secondary:hover {
 .stock-value {
     color: #2e7d32;
     font-size: 14px;
+}
+
+.stock-value.out-of-stock {
+    color: #831e1e;
 }
 
 
