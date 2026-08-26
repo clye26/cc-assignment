@@ -42,32 +42,38 @@ function displayToys(toys) {
 
     // TOY CARD TEMPLATE
     toys.forEach(toy => {
-        const card = document.createElement("div");
-        card.className = "toy-card";
+    const card = document.createElement("div");
+    card.className = "toy-card";
 
-        card.innerHTML = `
-            <img src="${toy.image}" alt="${toy.title}" class="toy-card-img">
-            <h3>${toy.title}</h3>
-            <p class="toy-brand">${toy.brand}</p>
-            <div class="toy-card-star-rating">
-                ${renderCSSStars(toy.rating)}
-            </div>
-            <p class="toy-price">₱${toy.price.toFixed(2)}</p>
-            <button class="add-to-bag-btn">Add to Cart</button>
-        `;
+    const isOut = toy.stock === 0; // Check if out of stock
 
-        // Clicking the card body goes to details
-        card.addEventListener("click", () => {
-            viewToy(toy.id);
-        });
+    card.innerHTML = `
+        <img src="${toy.image}" alt="${toy.title}" class="toy-card-img">
+        <h3>${toy.title}</h3>
+        <p class="toy-brand">${toy.brand}</p>
+        <div class="toy-card-star-rating">
+            ${renderCSSStars(toy.rating)}
+        </div>
+        <p class="toy-price">₱${toy.price.toFixed(2)}</p>
+        <button class="add-to-bag-btn" ${isOut ? 'disabled style="background-color: #ccc; cursor: not-allowed;"' : ''}>
+            ${isOut ? 'Out of Stock' : 'Add to Cart'}
+        </button>
+    `;
 
-        // Clicking the Add to Cart button prevents card redirection
-        const addBtn = card.querySelector(".add-to-bag-btn");
-        addBtn.addEventListener("click", (event) => {
-            event.stopPropagation();
+    // Clicking the card body goes to details
+    card.addEventListener("click", () => {
+        viewToy(toy.id);
+    });
+
+    // Clicking the Add to Cart button prevents card redirection
+    const addBtn = card.querySelector(".add-to-bag-btn");
+    addBtn.addEventListener("click", (event) => {
+        event.stopPropagation();
+        
+        // Don't add to cart if out of stock
+        if (isOut) return; 
             alert(`Added ${toy.title} to cart!`);
-        });
-
+    });
         toyList.appendChild(card);
     });
 }
