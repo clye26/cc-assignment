@@ -9,6 +9,7 @@ body {
     color: #222;
 }
 
+
 /* TOP NAVIGATION BAR */
 .navbar {
     background: #060b58;
@@ -519,4 +520,16 @@ footer {
     background: #060b58;
     margin-top: 60px;
     border-top: 1px solid #ddd;
+}
+
+/* STICKER FOOTER FOR DETAILS PAGE */
+body.details-page {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
+}
+
+body.details-page .details-container {
+    flex: 1;
 }
