@@ -110,7 +110,7 @@ async function fetchToyDetails() {
     const toyId = urlParams.get("id");
     const container = document.getElementById("toyDetails");
 
-    // 1. SHOW LOADING STATE IMMEDIATELY WITH CENTERED STYLING
+    // SHOW LOADING STATE IMMEDIATELY WITH CENTERED STYLING
     container.classList.add("empty-shelf");
     container.innerHTML = `
         <i class="fa-solid fa-spinner fa-spin" style="font-size: 2.5rem; color: #ffa100; margin-bottom: 12px;"></i>
@@ -118,7 +118,7 @@ async function fetchToyDetails() {
         <p>Hang tight!</p>
     `;
 
-    // 2. CHECK IF ID EXISTS
+    // CHECK IF ID EXISTS
     if (!toyId) {
         container.innerHTML = `
             <img src="images/errornotoy.png" alt="No toys found!" class="empty-shelf-img">
@@ -136,7 +136,7 @@ async function fetchToyDetails() {
         const toy = await response.json();
         const isOut = toy.stock === 0; // Check if out of stock
 
-        // 3. SUCCESS: REMOVE empty-shelf class so the 2-column grid works normally!
+        // REMOVE empty-shelf class so the 2-column grid works normally
         container.classList.remove("empty-shelf");
 
         container.innerHTML = `
