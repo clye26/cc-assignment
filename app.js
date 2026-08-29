@@ -33,7 +33,7 @@ function displayToys(toys) {
     if (!toys || toys.length === 0) {
         toyList.innerHTML = `
             <div class="no-toys-message" style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666;">
-                <img src="images/errorsearch.png" alt="No toys found!" style="height: 200px; width: 390px; margin-bottom: 2px;">
+                <img src="images/errorsearch.png" alt="No toys found!" class="no-toys-img">
                 <h3>Oops! That toy must be hiding in the toy box. Let's try another search!</h3>
             </div>
         `;
@@ -111,9 +111,15 @@ async function fetchToyDetails() {
     const container = document.getElementById("toyDetails");
 
     if (!toyId) {
-        container.innerHTML = "<p>No toy selected. <a href='index.html'>Back to Home</a></p>";
-        return;
-    }
+    container.classList.add("empty-shelf"); // Adds the compact centered styling
+    container.innerHTML = `
+        <img src="images/errornotoy.png" alt="No toys found!" class="empty-shelf-img">
+        <h2>This shelf is empty!</h2>
+        <p>Looks like this toy rolled away. Head back to the toy box to pick a fun toy!</p>
+        <a href='index.html' class='back-home-btn'>Back to Homepage</a>
+    `;
+    return;
+}
 
     try {
         const response = await fetch(`${API_URL}/toys/${toyId}`);

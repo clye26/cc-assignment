@@ -22,12 +22,6 @@ body {
     gap: 15px;
 }
 
-.brand-logo {
-    font-size: 20px;
-    font-weight: bold;
-    color: #ff9f1c;
-}
-
 .search-bar-container {
     display: flex;
     align-items: center;
@@ -70,14 +64,7 @@ body {
 
 .search-icon-btn:hover {
     background: #a8670b;
-}
-
-/* SEARCH ERROR */
-.no-toys-message h3 {
-    font-size: 20px;
-    font-weight: lighter;
-    color: #3a3a3a;
-    margin-top: 10px;
+    color: #2c3e50;
 }
 
 .nav-right {
@@ -86,7 +73,6 @@ body {
 }
 
 /* NAVIGATION BAR LOGIN/SIGNUP AND CART BUTTONS */
-
 .nav-btn {
     background: transparent;
     border: transparent;
@@ -294,7 +280,7 @@ button.secondary:hover {
     background: #4e0303;
 }
 
-/* TOY DETAILS PAGE */
+/* TOY DETAILS PAGE CONTAINER */
 .details-container {
     max-width: 1000px;
     margin: 40px auto;
@@ -313,11 +299,6 @@ button.secondary:hover {
 }
 
 .toy-details-wrapper {
-    animation: fadeIn 0.4s ease-out forwards;
-}
-
-/* MAXIMIZED SCREEN */
-.toy-details-wrapper {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 40px;
@@ -326,6 +307,7 @@ button.secondary:hover {
     padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    animation: fadeIn 0.4s ease-out forwards;
 }
 
 /* TOY IMAGE */
@@ -568,6 +550,79 @@ body.details-page {
 
 body.details-page .details-container {
     flex: 1;
+}
+
+/* ERROR HANDLING STYLING */
+
+/* SEARCH ERROR */
+.no-toys-message h3 {
+    font-size: 20px;
+    font-weight: lighter;
+    color: #3a3a3a;
+    margin-top: 10px;
+}
+
+.no-toys-img {
+    max-width: 280px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 15px;
+}
+
+/* NO TOY SELECTED ERROR */
+.toy-details-wrapper.empty-shelf {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 480px;
+    margin: 40px auto;
+    padding: 25px 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    gap: 0; 
+}
+
+.toy-details-wrapper.empty-shelf .empty-shelf-img {
+    max-width: 240px;
+    width: 100%;
+    height: auto;
+    margin-bottom: 12px; 
+}
+
+.toy-details-wrapper.empty-shelf h2 {
+    font-size: 1.6rem;
+    color: #2c3e50;
+    margin-bottom: 8px; 
+}
+
+.toy-details-wrapper.empty-shelf p {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 20px; 
+}
+
+.back-home-btn {
+    display: inline-block;
+    background-color: #ffa100; 
+    color: #2c3e50;
+    padding: 10px 22px;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: bold;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.back-home-btn:hover {
+    background-color: #a8670b;
+    color: #070d13;
+    transform: translateY(-2px);
+}
+
+.back-home-btn:active {
+    transform: translateY(0);
 }
 
 /* RESPONSIVENESS AREA */
