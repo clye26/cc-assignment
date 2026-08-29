@@ -110,16 +110,24 @@ async function fetchToyDetails() {
     const toyId = urlParams.get("id");
     const container = document.getElementById("toyDetails");
 
-    if (!toyId) {
-    container.classList.add("empty-shelf"); // Adds the compact centered styling
+    // 1. SHOW LOADING STATE IMMEDIATELY WITH CENTERED STYLING
+    container.classList.add("empty-shelf");
     container.innerHTML = `
-        <img src="images/errornotoy.png" alt="No toys found!" class="empty-shelf-img">
-        <h2>This shelf is empty!</h2>
-        <p>Looks like this toy rolled away. Head back to the toy box to pick a fun toy!</p>
-        <a href='index.html' class='back-home-btn'>Back to Homepage</a>
+        <i class="fa-solid fa-spinner fa-spin" style="font-size: 2.5rem; color: #ffa100; margin-bottom: 12px;"></i>
+        <h2>Sorting through the Toy Shelf...</h2>
+        <p>Hang tight!</p>
     `;
-    return;
-}
+
+    // 2. CHECK IF ID EXISTS
+    if (!toyId) {
+        container.innerHTML = `
+            <img src="images/errornotoy.png" alt="No toys found!" class="empty-shelf-img">
+            <h2>This shelf is empty!</h2>
+            <p>Looks like this toy rolled away. Head back to the toy box to pick a fun toy!</p>
+            <a href='index.html' class='back-home-btn'>Back to Homepage</a>
+        `;
+        return;
+    }
 
     try {
         const response = await fetch(`${API_URL}/toys/${toyId}`);
@@ -127,6 +135,9 @@ async function fetchToyDetails() {
 
         const toy = await response.json();
         const isOut = toy.stock === 0; // Check if out of stock
+
+        // 3. SUCCESS: REMOVE empty-shelf class so the 2-column grid works normally!
+        container.classList.remove("empty-shelf");
 
         container.innerHTML = `
             <div class="details-image-section">
@@ -160,7 +171,7 @@ async function fetchToyDetails() {
                     <p class="detail-price">Price: <span class="price-value">₱${toy.price.toFixed(2)}</span></p>
                     <p class="stock-status">
                         Stock: 
-                        <span class="stock-value${isOut ? 'out-of-stock' : ''}">${isOut ? 'Out of Stock' : `${toy.stock} available`}</span> 
+                        <span class="stock-value ${isOut ? 'out-of-stock' : ''}">${isOut ? 'Out of Stock' : `${toy.stock} available`}</span> 
                     </p>
                 </div>
 
@@ -203,7 +214,13 @@ async function fetchToyDetails() {
 
     } catch (error) {
         console.error(error);
-        container.innerHTML = "<p>Oops! Unable to retrieve the Toy details. <a href='index.html'>Back to Home</a></p>";
+        container.classList.add("empty-shelf");
+        container.innerHTML = `
+            <img src="images/errornotoy.png" alt="No toys found!" class="empty-shelf-img">
+            <h2>This shelf is empty!</h2>
+            <p>Oops! Unable to retrieve the Toy details.</p>
+            <a href='index.html' class='back-home-btn'>Back to Homepage</a>
+        `;
     }
 }
 
