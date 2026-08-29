@@ -263,10 +263,16 @@ async function searchToys() {
 loadToys();
 
 // CAROUSEL IMAGE 
-const slides = [
+const desktopSlides = [
     { image: "images/carousel1.png" },
     { image: "images/carousel2.png" },
     { image: "images/carousel3.png" }
+];
+
+const mobileSlides = [
+    { image: "images/carousel1_responsive.png" }, 
+    { image: "images/carousel2_responsive.png" },
+    { image: "images/carousel3_responsive.png" }
 ];
 
 let currentSlide = 0;
@@ -280,7 +286,14 @@ function updateCarousel() {
     const banner = document.getElementById("carouselBanner");
     const dots = document.querySelectorAll(".dot");
 
-    banner.style.backgroundImage = `url('${slides[currentSlide].image}')`;
+    const activeSlides = window.innerWidth <= 768 ? mobileSlides : desktopSlides;
+
+    // Safety check so index doesn't break if arrays are different lengths
+    if (currentSlide >= activeSlides.length) {
+        currentSlide = 0;
+    }
+
+    banner.style.backgroundImage = `url('${activeSlides[currentSlide].image}')`;
 
     dots.forEach((dot, idx) => {
         if (idx === currentSlide) {
@@ -293,9 +306,15 @@ function updateCarousel() {
 
 // AUTO-SWIPE
 setInterval(() => {
-    currentSlide = (currentSlide + 1) % slides.length;
+    const activeSlides = window.innerWidth <= 768 ? mobileSlides : desktopSlides;
+    currentSlide = (currentSlide + 1) % activeSlides.length;
     updateCarousel();
 }, 5000);
+
+// Re-render if someone resizes their browser window live
+window.addEventListener("resize", () => {
+    updateCarousel();
+});
 
 updateCarousel();
 

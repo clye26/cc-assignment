@@ -85,6 +85,8 @@ body {
     gap: 10px;
 }
 
+/* NAVIGATION BAR LOGIN/SIGNUP AND CART BUTTONS */
+
 .nav-btn {
     background: transparent;
     border: transparent;
@@ -106,6 +108,18 @@ body {
     background: #e11717;
 }
 
+button, .nav-btn, .search-icon-btn {
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+button:hover {
+    transform: scale(1.02);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
 /* CAROUSEL BANNER */
 .carousel-section {
     position: relative;
@@ -123,6 +137,7 @@ body {
     
     transition: background-image 0.5s ease-out;
 }
+
 .carousel-dots {
     position: relative;
     z-index: 2;
@@ -180,7 +195,7 @@ main {
     font-size: 14px;
 }
 
-/* --- BUTTONS --- */
+/* BUTTONS */
 button {
     padding: 10px 15px;
     border: none;
@@ -225,6 +240,12 @@ button.secondary:hover {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.toy-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .toy-card-img {
@@ -278,6 +299,21 @@ button.secondary:hover {
     max-width: 1000px;
     margin: 40px auto;
     padding: 0 20px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.toy-details-wrapper {
+    animation: fadeIn 0.4s ease-out forwards;
 }
 
 /* MAXIMIZED SCREEN */
@@ -501,7 +537,7 @@ button.secondary:hover {
 
 @media (max-width: 768px) {
     .toy-details-wrapper {
-        grid-template-columns: 1fr; /* Switches to a single responsive column */
+        grid-template-columns: 1fr; 
         gap: 20px;
         padding: 20px;
         margin: 15px;
@@ -532,4 +568,27 @@ body.details-page {
 
 body.details-page .details-container {
     flex: 1;
+}
+
+/* RESPONSIVENESS AREA */
+
+@media (max-width: 1036px) {
+    .navbar {
+        flex-direction: column;
+        align-items: center; 
+        padding: 15px;
+    }
+
+    .nav-left, 
+    .search-bar-container, 
+    .nav-right {
+        width: 100%;
+        display: flex;
+        justify-content: center; 
+        margin-bottom: 10px;    
+    }
+
+    .nav-right {
+        gap: 10px; 
+    }
 }
