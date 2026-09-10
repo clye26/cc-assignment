@@ -1,13 +1,19 @@
+// API CONFIGURATION
 const API_URL = "https://cc-assignment-kappa.vercel.app"; 
+const API_KEY = "clyde-api-key-2606";
 
 // https://cc-assignment-kappa.vercel.app - vercel deployment for github
 // http://127.0.0.1:8000 - localhost
 
+// REUSABLE HEADER OBJECT
+const FETCH_OPTIONS = {
+  headers: { "x-api-key": API_KEY }
+};
 
 // GET ALL TOYS
 async function loadToys() {
     try {
-        const response = await fetch(`${API_URL}/toys`);
+        const response = await fetch(`${API_URL}/toys`, FETCH_OPTIONS);
         const data = await response.json();
         
         // Show Carousel Images when "Show All Toys"/Home
@@ -130,7 +136,7 @@ async function fetchToyDetails() {
     }
 
     try {
-        const response = await fetch(`${API_URL}/toys/${toyId}`);
+        const response = await fetch(`${API_URL}/toys/${toyId}`, FETCH_OPTIONS);
         if (!response.ok) throw new Error("Toy not found");
 
         const toy = await response.json();
@@ -260,7 +266,7 @@ async function searchToys() {
     }
 
     try {
-        const response = await fetch(`${API_URL}/toys/search?q=${encodeURIComponent(query)}`);
+        const response = await fetch(`${API_URL}/toys/search?q=${encodeURIComponent(query)}`, FETCH_OPTIONS);
         const data = await response.json();
         
         // Hide Carousel Images and show the "Show all Toys" button
