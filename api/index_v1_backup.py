@@ -1,19 +1,10 @@
-from fastapi import FastAPI, HTTPException, Header, Query, Depends
+from fastapi import FastAPI, HTTPException, Header, Query
 from fastapi.middleware.cors import CORSMiddleware
-from datetime import datetime
-from pydantic import BaseModel, Field
-from typing import Optional, Literal
-
-# ============================================================
-# CONFIGURATION
-# ============================================================
-API_KEY = "clyde-api-key-2606"
-API_VERSION = "1.0"
 
 app = FastAPI(
-    title="Clyde's Toy Shop",
-    description="The Clyde's Toy Shop utilizing FastAPI to provide a simple API for toy enthusiasts.",
-    version=API_VERSION
+    title="Clyde's Toy Corner",
+    description="The Clyde's Toy Corner Store utilizing FastAPI to provide a simple API for toy enthusiasts.",
+    version="1.0.0"
 )
 
 app.add_middleware(
@@ -24,38 +15,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# ============================================================
-# DATA MODEL
-# ============================================================
-class Toy(BaseModel):
-    id: int
-    title: str = Field(min_length=1)
-    brand: str = Field(min_length=1)
-    year: int = Field(ge=1900, le=datetime.now().year)
-    genre: Literal[
-        "Building Blocks", 
-        "Mecha Model Kits", 
-        "Novelty Toys", 
-        "Diecast Cars", 
-        "Soft Toys", 
-        "Action Figures", 
-        "Board Games", 
-        "RC Toys", 
-        "Other", # Safety Net
-    ]
-    price: float = Field(gt=0)
-    stock: int = Field(ge=0)
-    image: str = Field(min_length=1)
-    description: str = Field(min_length=1)
-    rating: str = Field(min_length=1)
-    age_range: str = Field(min_length=1)
-    dimensions: str = Field(min_length=1)
-    height: str = Field(min_length=1)
-    weight: str = Field(min_length=1)
-
-# ============================================================
 # TOYS DATA
-# ============================================================
 toys = [
 
     {
@@ -380,29 +340,12 @@ toys = [
     }
 ]
 
-# Validate Starting Toy Dataset when the Application Launches
-validated_Toys = [Toy(**toy).model_dump() for toy in toys]
-toys = validated_Toys
-
-# ============================================================
-# API KEY AUTHENTICATION
-# ============================================================
-def verify_api_key(x_api_key: Optional[str] = Header(default=None)):
-    if x_api_key != API_KEY:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid or missing API key."
-        )
-    return True
-
-# ============================================================
 # HOME
-# ============================================================
 @app.get("/")
 def home():
 
     return {
-        "message": "Welcome to Clyde's Toy Shop API!",
+        "message": "Welcome to Clyde's Toy Corner API!",
         "endpoints": [
             "/toys",
             "/toys/{id}",
@@ -410,22 +353,9 @@ def home():
         ]
     }
 
-# ============================================================
-# HEALTH CHECK (Public)
-# ============================================================
-@app.get("/health")
-def health_check():
-    return {
-        "status": "ok",
-        "service": "Clyde's Toy Shop API",
-        "version": API_VERSION,
-        "timestamp": datetime.utcnow().isoformat() + "Z"
-    }
 
-# ============================================================
-# GET ALL TOYS (Protected)
-# ============================================================
-@app.get("/api/v1/toys", dependencies=[Depends(verify_api_key)])
+# GET ALL TOYS
+@app.get("/toys")
 def get_toys():
 
     return {
@@ -446,24 +376,17 @@ August 23, 2026 | 9:42PM:
     
 """
 
-# ============================================================
-# SEARCH TOYS (Protected)
-# ============================================================
-@app.get("/api/v1/toys/search", dependencies=[Depends(verify_api_key)])
+# SEARCH TOYS
+@app.get("/toys/search")
 def search_toys( q: str = Query(..., min_length=1)):
     q = q.lower()
     results = []
-
     for toy in toys:
         searchable_text = (
             f"{toy['title']} "
             f"{toy['brand']} "
             f"{toy['year']} "
-            f"{toy['genre']} "
-            f"{toy['price']} "
-            f"{toy['description']} "
-            f"{toy['rating']} "
-            f"{toy['age_range']} "
+            f"{toy['genre']}"
         ).lower()
 
         if q in searchable_text:
@@ -475,10 +398,8 @@ def search_toys( q: str = Query(..., min_length=1)):
         "results": results
     }
 
-# ============================================================
-# GET ONE TOY (Protected)
-# ============================================================
-@app.get("/api/v1/toys/{toy_id}", dependencies=[Depends(verify_api_key)])
+# GET ONE TOY
+@app.get("/toys/{toy_id}")
 def get_toy(toy_id: int):
 
     for toy in toys:
