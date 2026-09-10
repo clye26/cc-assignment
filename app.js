@@ -1,5 +1,5 @@
 // API CONFIGURATION
-const API_URL = "https://cc-assignment-kappa.vercel.app"; 
+const API_URL = "https://cc-assignment-kappa.vercel.app/api/v1"; 
 const API_KEY = "clyde-api-key-2606";
 
 // https://cc-assignment-kappa.vercel.app - vercel deployment for github
