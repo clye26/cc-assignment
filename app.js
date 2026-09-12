@@ -2,8 +2,8 @@
 const API_URL = "https://cc-assignment-kappa.vercel.app/api/v1"; 
 const API_KEY = "clyde-api-key-2606";
 
-// https://cc-assignment-kappa.vercel.app - vercel deployment for github
-// http://127.0.0.1:8000 - localhost
+// https://cc-assignment-kappa.vercel.app/api/v1 - vercel deployment for github
+// http://127.0.0.1:8000/api/v1 - localhost
 
 // REUSABLE HEADER OBJECT
 const FETCH_OPTIONS = {
@@ -12,9 +12,21 @@ const FETCH_OPTIONS = {
 
 // GET ALL TOYS
 async function loadToys() {
+    const errorBanner = document.getElementById("error-banner");
+    const errorMessage = document.getElementById("error-message");
+
     try {
         const response = await fetch(`${API_URL}/toys`, FETCH_OPTIONS);
+        
+        // Check if the server responded with an error (like a 401 or 500)
+        if (!response.ok) {
+            throw new Error(`Server status: ${response.status}`);
+        }
+
         const data = await response.json();
+        
+        // Hide error banner if everything loaded successfully
+        if (errorBanner) errorBanner.style.display = "none";
         
         // Show Carousel Images when "Show All Toys"/Home
         document.getElementById("carouselBanner").style.display = "flex";
@@ -26,9 +38,18 @@ async function loadToys() {
         displayToys(data.toys);
     } catch (error) {
         console.error(error);
-        document.getElementById("toyList").innerHTML = "Oops! Unable to connect to the Toy API Train Station.";
+        
+        const toyList = document.getElementById("toyList");
+        toyList.innerHTML = `
+            <div class="error-card-box">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <h2>Whoops! The toy box won't open, please try again later!</h2>
+                <p>Toy Error: ${error.message}</p>
+            </div>
+        `;
     }
 }
+
 
 // DISPLAY TOYS IN A 4-ITEM GRID
 function displayToys(toys) {
