@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
+from fastapi.responses import FileResponse
+import os
 
 # ============================================================
 # CONFIGURATION
@@ -66,7 +68,7 @@ toys = [
         "genre": "Building Blocks",
         "price": 35000.00,
         "stock": 0,
-        "image": "https://cc-assignment-kappa.vercel.app/images/lego_detecivesoffice.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/lego_detecivesoffice.jpg",
         "description": "A detailed modular building featuring a detective's office, pool hall, and hidden smuggling compartments.",
         "rating": "4.9",
         "age_range": "16+",
@@ -82,7 +84,7 @@ toys = [
         "genre": "Building Blocks",
         "price": 7190.00,
         "stock": 10,
-        "image": "https://cc-assignment-kappa.vercel.app/images/lego_crane.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/lego_crane.jpg",
         "description": "A heavy-duty construction crane toy equipped with fold-out support legs and a working winch.",
         "rating": "4.8",
         "age_range": "9+",
@@ -98,7 +100,7 @@ toys = [
         "genre": "Building Blocks",
         "price": 4500.00,
         "stock": 15,
-        "image": "https://cc-assignment-kappa.vercel.app/images/lego_excavator.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/lego_excavator.jpg",
         "description": "A realistic tracked excavator featuring a versatile pneumatic-style bucket and worker minifigure.",
         "rating": "4.7",
         "age_range": "8+",
@@ -114,7 +116,7 @@ toys = [
         "genre": "Building Blocks",
         "price": 2500.00,
         "stock": 20,
-        "image": "https://cc-assignment-kappa.vercel.app/images/lego_jet.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/lego_jet.jpg",
         "description": "A large commercial passenger airplane model complete with a terminal vehicle and travel accessories.",
         "rating": "4.6",
         "age_range": "6+",
@@ -130,7 +132,7 @@ toys = [
         "genre": "Building Blocks",
         "price": 72999.00,
         "stock": 3,
-        "image": "https://cc-assignment-kappa.vercel.app/images/lego_deathstar.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/lego_deathstar.jpg",
         "description": "An ultimate galactic battle station playset featuring iconic rooms and classic Star Wars characters.",
         "rating": "5.0",
         "age_range": "18+",
@@ -146,7 +148,7 @@ toys = [
         "genre": "Mecha Model Kits",
         "price": 7500.00,
         "stock": 5,
-        "image": "https://cc-assignment-kappa.vercel.app/images/pg_unleashed.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/pg_unleashed.jpg",
         "description": "A masterpiece grade model kit featuring an intricate internal frame and metallic plating effects.",
         "rating": "4.9",
         "age_range": "15+",
@@ -162,7 +164,7 @@ toys = [
         "genre": "Mecha Model Kits",
         "price": 6500.00,
         "stock": 6,
-        "image": "https://cc-assignment-kappa.vercel.app/images/pg_unicorn.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/pg_unicorn.jpg",
         "description": "A highly transformable Perfect Grade model kit with LED compatibility and psycho-frame panels.",
         "rating": "4.8",
         "age_range": "15+",
@@ -178,7 +180,7 @@ toys = [
         "genre": "Mecha Model Kits",
         "price": 6000.00,
         "stock": 4,
-        "image": "https://cc-assignment-kappa.vercel.app/images/pg_zeta.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/pg_zeta.jpg",
         "description": "A classic Perfect Grade kit capable of transforming between mobile suit and wave rider modes.",
         "rating": "4.5",
         "age_range": "15+",
@@ -194,7 +196,7 @@ toys = [
         "genre": "Novelty Toys",
         "price": 350.00,
         "stock": 30,
-        "image": "https://cc-assignment-kappa.vercel.app/images/tung_tung.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/tung_tung.jpg",
         "description": "A funny viral internet meme plush toy that plays loud wake-up sounds.",
         "rating": "1",
         "age_range": "8+",
@@ -210,7 +212,7 @@ toys = [
         "genre": "Diecast Cars",
         "price": 550.00,
         "stock": 25,
-        "image": "https://cc-assignment-kappa.vercel.app/images/tomica_crown.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/tomica_crown.jpg",
         "description": "A highly detailed diecast model of a Japanese highway patrol cruiser.",
         "rating": "4",
         "age_range": "6+",
@@ -226,7 +228,7 @@ toys = [
         "genre": "Diecast Cars",
         "price": 850.00,
         "stock": 12,
-        "image": "https://cc-assignment-kappa.vercel.app/images/tomica_ae86.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/tomica_ae86.jpg",
         "description": "A collectible diecast replica of the legendary street racing tofu delivery car from Initial D.",
         "rating": "4.9",
         "age_range": "6+",
@@ -242,7 +244,7 @@ toys = [
         "genre": "Soft Toys",
         "price": 1721.00,
         "stock": 1,
-        "image": "https://cc-assignment-kappa.vercel.app/images/colers_penguin.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/colers_penguin.jpg",
         "description": "A very cute plush penguin toy wearing a dinosaur jacket.",
         "rating": "5",
         "age_range": "3+",
@@ -258,7 +260,7 @@ toys = [
         "genre": "Building Blocks",
         "price": 70000.00,
         "stock": 30,
-        "image": "https://cc-assignment-kappa.vercel.app/images/lego_student.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/lego_student.jpg",
         "description": "A special edition university student minifigure equipped with a indestructible 10 year old Thinkpad laptop and deadlines in mind.",
         "rating": "3.0",
         "age_range": "6+",
@@ -274,7 +276,7 @@ toys = [
         "genre": "Novelty Toys",
         "price": 2500.00,
         "stock": 5,
-        "image": "https://cc-assignment-kappa.vercel.app/images/skibidi.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/skibidi.jpg",
         "description": "A remote-controlled novelty toy featuring sound effects and moving character parts.",
         "rating": "1.4",
         "age_range": "8+",
@@ -290,7 +292,7 @@ toys = [
         "genre": "Diecast Cars",
         "price": 550.00,
         "stock": 20,
-        "image": "https://cc-assignment-kappa.vercel.app/images/tomica_ambulance.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/tomica_ambulance.jpg",
         "description": "A realistic diecast model of a Japanese emergency medical service ambulance.",
         "rating": "3.5",
         "age_range": "6+",
@@ -306,7 +308,7 @@ toys = [
         "genre": "Building Blocks",
         "price": 9000.00,
         "stock": 4,
-        "image": "https://cc-assignment-kappa.vercel.app/images/lego_bikeshop_cafe.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/lego_bikeshop_cafe.jpg",
         "description": "A charming 3-in-1 modular street corner set featuring a cozy cafe and a bicycle store.",
         "rating": "4.8",
         "age_range": "9+",
@@ -322,7 +324,7 @@ toys = [
         "genre": "Building Blocks",
         "price": 1200.00,
         "stock": 26,
-        "image": "https://cc-assignment-kappa.vercel.app/images/lego_forest_police.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/lego_forest_police.jpg",
         "description": "An off-road police vehicle set equipped for patrolling rugged mountain trails.",
         "rating": "4.5",
         "age_range": "5+",
@@ -338,7 +340,7 @@ toys = [
         "genre": "Building Blocks",
         "price": 1000.00,
         "stock": 26,
-        "image": "https://cc-assignment-kappa.vercel.app/images/lego_city_police.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/lego_city_police.jpg",
         "description": "A classic city patrol sedan set complete with an officer minifigure and speed camera accessory.",
         "rating": "4.4",
         "age_range": "5+",
@@ -354,7 +356,7 @@ toys = [
         "genre": "Building Blocks",
         "price": 2650.00,
         "stock": 26,
-        "image": "https://cc-assignment-kappa.vercel.app/images/lego_emmet.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/lego_emmet.jpg",
         "description": "Get ready for high-speed action in the world of The LEGO Movie with the Bad Cop's Pursuit Building Set!",
         "rating": "4.7",
         "age_range": "7+",
@@ -370,7 +372,7 @@ toys = [
         "genre": "Building Blocks",
         "price": 3200.00,
         "stock": 5,
-        "image": "https://cc-assignment-kappa.vercel.app/images/lego_service_truck.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/api/v1/images/lego_service_truck.jpg",
         "description": "A city maintenance truck set equipped with a working crane arm and portable toilet.",
         "rating": "4.6",
         "age_range": "5+",
@@ -421,6 +423,16 @@ def health_check():
         "version": API_VERSION,
         "timestamp": datetime.utcnow().isoformat() + "Z"
     }
+
+# ============================================================
+# GET TOY IMAGE (Protected by API Key)
+# ============================================================
+@app.get("/api/v1/images/{image_name}", dependencies=[Depends(verify_api_key)])
+def get_toy_image(image_name: str):
+    file_path = os.path.join("images", image_name)
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    raise HTTPException(status_code=404, detail="Image not found.")
 
 # ============================================================
 # GET ALL TOYS (Protected)
