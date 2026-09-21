@@ -425,13 +425,13 @@ def health_check():
     }
 
 # ============================================================
-# GET TOY IMAGE (Protected by API Key)
+# GET TOY IMAGE (Protected)
 # ============================================================
 @app.get("/api/v1/images/{image_name}", dependencies=[Depends(verify_api_key)])
 def get_toy_image(image_name: str):
     file_path = os.path.join("images", image_name)
     if os.path.exists(file_path):
-        return FileResponse(file_path)
+        return FileResponse(file_path, media_type="image/jpeg")
     raise HTTPException(status_code=404, detail="Image not found.")
 
 # ============================================================
