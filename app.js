@@ -220,13 +220,13 @@ async function fetchToyDetails() {
             </div>
         `;
 
-        // Event Listeners for Quantity and Action Buttons
+        // Event Listeners for Quantity (Passing toy.price)
         document.getElementById("increaseQtyBtn").addEventListener("click", () => {
-            increaseQty(toy.stock);
+            increaseQty(toy.stock, toy.price);
         });
 
         document.getElementById("decreaseQtyBtn").addEventListener("click", () => {
-            decreaseQty();
+            decreaseQty(toy.price);
         });
 
         // Event Listeners for catching apostrophes/special characters title errors
@@ -252,20 +252,34 @@ async function fetchToyDetails() {
 }
 
 // Quantity Functions
-function increaseQty(maxStock) {
+function increaseQty(maxStock, basePrice) {
     const qtyInput = document.getElementById("qtyInput");
+    const priceDisplay = document.querySelector(".price-value");
     let currentQty = parseInt(qtyInput.value);
+    
     if (currentQty < maxStock) {
-        qtyInput.value = currentQty + 1;
+        currentQty++;
+        qtyInput.value = currentQty;
+        updateTotalPrice(basePrice, currentQty, priceDisplay);
     }
 }
 
-function decreaseQty() {
+function decreaseQty(basePrice) {
     const qtyInput = document.getElementById("qtyInput");
+    const priceDisplay = document.querySelector(".price-value");
     let currentQty = parseInt(qtyInput.value);
+    
     if (currentQty > 1) {
-        qtyInput.value = currentQty - 1;
+        currentQty--;
+        qtyInput.value = currentQty;
+        updateTotalPrice(basePrice, currentQty, priceDisplay);
     }
+}
+
+// Helper function to calculate and display the updated total price
+function updateTotalPrice(basePrice, quantity, displayElement) {
+    let totalPrice = basePrice * quantity;
+    displayElement.innerText = `₱${totalPrice.toFixed(2)}`;
 }
 
 // SEARCH TOYS
