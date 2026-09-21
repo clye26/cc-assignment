@@ -370,7 +370,7 @@ toys = [
         "genre": "Building Blocks",
         "price": 3200.00,
         "stock": 5,
-        "image": "images/lego_service_truck.jpg",
+        "image": "https://cc-assignment-kappa.vercel.app/images/lego_service_truck.jpg",
         "description": "A city maintenance truck set equipped with a working crane arm and portable toilet.",
         "rating": "4.6",
         "age_range": "5+",
