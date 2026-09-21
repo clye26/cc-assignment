@@ -1,9 +1,8 @@
-from fastapi import FastAPI, HTTPException, Header, Query, Depends
+from fastapi import FastAPI, HTTPException, Header, Query, Depends, Response
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 from pydantic import BaseModel, Field
 from typing import Optional, Literal
-from fastapi.responses import FileResponse
 import os
 
 # ============================================================
@@ -425,14 +424,19 @@ def health_check():
     }
 
 # ============================================================
-# GET TOY IMAGE (Protected)
+# GET TOY IMAGE (Public)
 # ============================================================
-@app.get("/api/v1/images/{image_name}", dependencies=[Depends(verify_api_key)])
+@app.get("/api/v1/images/{image_name}")
 def get_toy_image(image_name: str):
     file_path = os.path.join("images", image_name)
-    if os.path.exists(file_path):
-        return FileResponse(file_path, media_type="image/jpeg")
-    raise HTTPException(status_code=404, detail="Image not found.")
+    
+    if not os.path.exists(file_path):
+        raise HTTPException(status_code=404, detail="Image not found.")
+    
+    with open(file_path, "rb") as f:
+        image_bytes = f.read()
+
+    return Response(content=image_bytes, media_type="image/jpeg")
 
 # ============================================================
 # GET ALL TOYS (Protected)

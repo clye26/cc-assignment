@@ -50,28 +50,6 @@ async function loadToys() {
     }
 }
 
-// LOAD TOY IMAGE FROM PROTECTED ENDPOINT
-async function loadToyImage(imageEndpointUrl) {
-    try {
-        const response = await fetch(imageEndpointUrl, {
-            method: 'GET',
-            headers: {
-                'x-api-key': 'clyde-api-key-2606' 
-            }
-        });
-
-        if (!response.ok) throw new Error('Failed to load image');
-
-        const imageBlob = await response.blob();
-        const imageObjectURL = URL.createObjectURL(imageBlob);
-
-        document.getElementById('toy-image').src = imageObjectURL;
-        
-    } catch (error) {
-        console.error("Error loading image:", error);
-    }
-}
-
 
 // DISPLAY TOYS IN A 4-ITEM GRID
 function displayToys(toys) {
