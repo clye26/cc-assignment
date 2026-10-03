@@ -8,8 +8,14 @@ import os
 # ============================================================
 # CONFIGURATION
 # ============================================================
-API_KEY = "clyde-api-key-2606"
+ALLOWED_KEYS = [
+    "clyde-api-key-2606",    # Website 1 (Clyde's Toy Shop | Main Website)
+    "clyde-api-key-quiz",    # Website 2 (Toy Quiz Website)
+    "clyde-api-key-gashapon"    # Website 3 (Gashapon Bandai Website)
+]
+
 API_VERSION = "1.0"
+
 
 app = FastAPI(
     title="Clyde's Toy Shop",
@@ -389,12 +395,14 @@ toys = validated_Toys
 # API KEY AUTHENTICATION
 # ============================================================
 def verify_api_key(x_api_key: Optional[str] = Header(default=None)):
-    if x_api_key != API_KEY:
+    if x_api_key not in ALLOWED_KEYS:
         raise HTTPException(
             status_code=401,
             detail="Invalid or missing API key."
         )
     return True
+
+# Updated "API_KEY" to "ALLOWED_KEYS" to support multiple API keys for different websites.
 
 # ============================================================
 # HOME
