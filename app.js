@@ -18,20 +18,22 @@ async function loadToys() {
     try {
         const response = await fetch(`${API_URL}/toys`, FETCH_OPTIONS);
         
-        // Check if the server responded with an error (like a 401 or 500)
+        // Check if the server responded with an error (like a 401 or 500).
         if (!response.ok) {
             throw new Error(`Server status: ${response.status}`);
         }
 
+        // Parse or break down the JSON response.
         const data = await response.json();
         
-        // Hide error banner if everything loaded successfully
+        // Hide error banner if everything loaded successfully.
         if (errorBanner) errorBanner.style.display = "none";
         
-        // Show Carousel Images when "Show All Toys"/Home
+        // Show Carousel Images when "Show All Toys"/Home.
         document.getElementById("carouselBanner").style.display = "flex";
         document.getElementById("showAllBtn").style.display = "none";
         
+        // Extract Toy Data and Display.
         document.getElementById("sectionTitle").innerText = "All Toys";
         document.getElementById("resultsCount").innerText = `Showing ${data.toys.length} results`;
         

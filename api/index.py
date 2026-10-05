@@ -449,6 +449,8 @@ def get_toy_image(image_name: str):
 # ============================================================
 # GET ALL TOYS (Protected)
 # ============================================================
+
+# Responsible for returning JSON objects.
 @app.get("/api/v1/toys", dependencies=[Depends(verify_api_key)])
 def get_toys():
 
