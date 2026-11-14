@@ -1,6 +1,6 @@
-// API CONFIGURATION (Pulled securely from local config)
-const API_URL = CONFIG.API_URL; 
-const API_KEY = CONFIG.API_KEY;
+// API CONFIGURATION (Safe fallback if config.js fails to load)
+const API_URL = (typeof CONFIG !== 'undefined' && CONFIG.API_URL) ? CONFIG.API_URL : '/api/v1';
+const API_KEY = (typeof CONFIG !== 'undefined' && CONFIG.API_KEY) ? CONFIG.API_KEY : '';
 
 // REUSABLE HEADER OBJECT
 const FETCH_OPTIONS = {
