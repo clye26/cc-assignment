@@ -1,5 +1,7 @@
 {
-  "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index.py" }
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/api/(.*)", "destination": "/api/index.py" },
+    { "src": "/(.*)", "destination": "/index.html" }
   ]
 }
