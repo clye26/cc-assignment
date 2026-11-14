@@ -6,6 +6,7 @@ from typing import Optional, Literal
 import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
+from fastapi.staticfiles import StaticFiles
 
 # ============================================================
 # CONFIGURATION & ENVIRONMENT SETUP
@@ -258,3 +259,5 @@ def delete_toy(toy_id: int):
     return {
         "message": f"Toy ID {toy_id} successfully deleted from the catalog."
     }
+
+app.mount("/", StaticFiles(directory=".", html=True), name="static")
