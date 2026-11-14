@@ -1,9 +1,6 @@
-// API CONFIGURATION
-const API_URL = "https://cc-assignment-kappa.vercel.app/api/v1"; 
-const API_KEY = "clyde-api-key-2606";
-
-// https://cc-assignment-kappa.vercel.app/api/v1 - vercel deployment for github
-// http://127.0.0.1:8000/api/v1 - localhost
+// API CONFIGURATION (Pulled securely from local config)
+const API_URL = CONFIG.API_URL; 
+const API_KEY = CONFIG.API_KEY;
 
 // REUSABLE HEADER OBJECT
 const FETCH_OPTIONS = {

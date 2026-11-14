@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clyde's Toy Shop - Admin Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load config.js first -->
+    <script src="config.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+    <!-- Navbar -->
+    <nav class="bg-blue-600 text-white p-4 flex justify-between items-center shadow-md">
+        <h1 class="text-xl font-bold">Toy Shop Admin Dashboard</h1>
+        <div>
+            <span id="welcome-user" class="mr-4"></span>
+            <button id="logout-btn" class="bg-red-500 px-3 py-1 rounded hover:bg-red-600 transition">Logout</button>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        
+        <!-- Add / Edit Toy Section -->
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 id="form-title" class="text-lg font-bold mb-4 text-gray-800">Add New Toy</h2>
+            <form id="add-toy-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <input type="text" id="toy-title" placeholder="Title" required class="border p-2 rounded">
+                <input type="text" id="toy-brand" placeholder="Brand" required class="border p-2 rounded">
+                <input type="number" id="toy-year" placeholder="Year" required class="border p-2 rounded">
+                <input type="text" id="toy-genre" placeholder="Genre (e.g., Action Figures)" required class="border p-2 rounded">
+                <input type="number" step="0.01" id="toy-price" placeholder="Price ($)" required class="border p-2 rounded">
+                <input type="number" id="toy-stock" placeholder="Stock Quantity" required class="border p-2 rounded">
+                <input type="text" id="toy-image" placeholder="Image URL filename" required class="border p-2 rounded">
+                <input type="text" id="toy-rating" placeholder="Rating (e.g., 4.8)" required class="border p-2 rounded">
+                <input type="text" id="toy-age" placeholder="Age Range" required class="border p-2 rounded">
+                <input type="text" id="toy-dimensions" placeholder="Dimensions" required class="border p-2 rounded">
+                <input type="text" id="toy-height" placeholder="Height" required class="border p-2 rounded">
+                <input type="text" id="toy-weight" placeholder="Weight" required class="border p-2 rounded">
+                <textarea id="toy-desc" placeholder="Description" required class="border p-2 rounded col-span-full"></textarea>
+                
+                <button type="submit" id="form-submit-btn" class="bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition col-span-full">Add Toy to Database</button>
+                <button type="button" id="cancel-edit-btn" onclick="cancelEdit()" class="hidden bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-600 transition col-span-full md:col-span-1">Cancel Edit</button>
+            </form>
+        </div>
+
+        <!-- Toy Catalog List -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-lg font-bold mb-4 text-gray-800">Existing Toy Inventory</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-gray-200 text-gray-700">
+                            <th class="p-3 border">ID</th>
+                            <th class="p-3 border">Title</th>
+                            <th class="p-3 border">Brand</th>
+                            <th class="p-3 border">Price</th>
+                            <th class="p-3 border">Stock</th>
+                            <th class="p-3 border">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="toy-table-body">
+                        <!-- Populated via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load external admin script -->
+    <script src="admin.js"></script>
+</body>
+</html>
