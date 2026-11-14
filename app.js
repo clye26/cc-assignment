@@ -1,6 +1,6 @@
 // API CONFIGURATION
-const API_URL = '/api/v1'; 
-const API_KEY = ''; 
+const API_URL = (typeof CONFIG !== 'undefined' && CONFIG.API_URL) ? CONFIG.API_URL : '/api/v1';
+const API_KEY = (typeof CONFIG !== 'undefined' && CONFIG.API_KEY) ? CONFIG.API_KEY : 'clyde-api-key-2606';
 
 // REUSABLE HEADER OBJECT
 const FETCH_OPTIONS = {
