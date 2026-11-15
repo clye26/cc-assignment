@@ -1,4 +1,5 @@
 const API_URL = CONFIG.API_URL;
+const API_KEY = CONFIG.API_KEY; 
 
 const loginForm = document.getElementById("login-form");
 if (loginForm) {
@@ -9,11 +10,15 @@ if (loginForm) {
         const errorDiv = document.getElementById("error-msg");
 
         errorDiv.classList.add("hidden");
+        document.getElementById("error-text").textContent = "";
 
         try {
             const response = await fetch(`${API_URL}/auth/login`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: { 
+                    "Content-Type": "application/json",
+                    "x-api-key": API_KEY
+                },
                 body: JSON.stringify({ username, password })
             });
 
@@ -23,13 +28,19 @@ if (loginForm) {
                 throw new Error(data.detail || "Login failed.");
             }
 
-            // Save login state in browser storage and redirect
-            localStorage.setItem("isStaffLoggedIn", "true");
-            localStorage.setItem("staffUsername", data.username);
-            window.location.href = "admin.html";
+            // Save login state, role, and username in browser storage
+            localStorage.setItem("isLoggedIn", "true");
+            localStorage.setItem("currentUser", data.username);
+            localStorage.setItem("userRole", data.role); // 'staff' or 'customer'
+
+            if (data.role === "staff") {
+                window.location.href = "admin.html"; // Redirect staff to admin dashboard
+            } else {
+                window.location.href = "index.html"; // Redirect customers to the main shop
+            }
 
         } catch (err) {
-            errorDiv.textContent = err.message;
+            document.getElementById("error-text").textContent = err.message;
             errorDiv.classList.remove("hidden");
         }
     });

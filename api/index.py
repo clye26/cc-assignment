@@ -7,6 +7,7 @@ import os
 from dotenv import load_dotenv
 from supabase import create_client, Client
 from fastapi.staticfiles import StaticFiles
+import bcrypt
 
 # ============================================================
 # CONFIGURATION & ENVIRONMENT SETUP
@@ -90,21 +91,33 @@ def verify_api_key(x_api_key: Optional[str] = Header(default=None)):
 # STAFF LOGIN ENDPOINT
 # ============================================================
 @app.post("/api/v1/auth/login")
-def staff_login(credentials: StaffLogin):
-    # Query or call Supabase to find the Staff Member in the database.
-    response = supabase.table("staff_users").select("*").eq("username", credentials.username).execute()
-    users = response.data #response.data is the list of users returned from the query.
+def centralized_login(credentials: StaffLogin):
+    # Check if user exists in staff_users table
+    staff_res = supabase.table("staff_users").select("*").eq("username", credentials.username).execute()
+    if staff_res.data: # Return list of Staff Users if found, else return empty list.
+        user = staff_res.data[0]
+        if bcrypt.checkpw(credentials.password.encode('utf-8'), user["password"].encode('utf-8')):
+            return {
+                "message": "Login successful!",
+                "username": user["username"],
+                "role": "staff"
+            }
 
-    if not users or users[0]["password"] != credentials.password:
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid username or password."
-        )
-    
-    return {
-        "message": "Login successful!",
-        "username": users[0]["username"]
-    }
+    # Check if user exists in customer_users table
+    cust_res = supabase.table("customer_users").select("*").eq("username", credentials.username).execute()
+    if cust_res.data: # Return list of Customer Users if found, else return empty list.
+        user = cust_res.data[0]
+        if bcrypt.checkpw(credentials.password.encode('utf-8'), user["password"].encode('utf-8')):
+            return {
+                "message": "Login successful!",
+                "username": user["username"],
+                "role": "customer"
+            }
+
+    raise HTTPException(
+        status_code=401,
+        detail="Invalid username or password."
+    )
 
 # ============================================================
 # HOME

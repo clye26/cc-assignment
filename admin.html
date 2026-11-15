@@ -4,70 +4,327 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clyde's Toy Shop - Admin Dashboard</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Load config.js first -->
-    <script src="config.js"></script>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body class="bg-gray-100 min-h-screen">
+
+<body class="admin-page">
 
     <!-- Navbar -->
-    <nav class="bg-blue-600 text-white p-4 flex justify-between items-center shadow-md">
-        <h1 class="text-xl font-bold">Toy Shop Admin Dashboard</h1>
-        <div>
-            <span id="welcome-user" class="mr-4"></span>
-            <button id="logout-btn" class="bg-red-500 px-3 py-1 rounded hover:bg-red-600 transition">Logout</button>
+    <header class="admin-navbar">
+        <div class="nav-left">
+            <img src="images/nav_logo.png" alt="Clyde's Toy Shop Logo" class="brand-logo-img">
         </div>
-    </nav>
-
-    <div class="container mx-auto p-6">
         
-        <!-- Add / Edit Toy Section -->
-        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
-            <h2 id="form-title" class="text-lg font-bold mb-4 text-gray-800">Add New Toy</h2>
-            <form id="add-toy-form" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <input type="text" id="toy-title" placeholder="Title" required class="border p-2 rounded">
-                <input type="text" id="toy-brand" placeholder="Brand" required class="border p-2 rounded">
-                <input type="number" id="toy-year" placeholder="Year" required class="border p-2 rounded">
-                <input type="text" id="toy-genre" placeholder="Genre (e.g., Action Figures)" required class="border p-2 rounded">
-                <input type="number" step="0.01" id="toy-price" placeholder="Price ($)" required class="border p-2 rounded">
-                <input type="number" id="toy-stock" placeholder="Stock Quantity" required class="border p-2 rounded">
-                <input type="text" id="toy-image" placeholder="Image URL filename" required class="border p-2 rounded">
-                <input type="text" id="toy-rating" placeholder="Rating (e.g., 4.8)" required class="border p-2 rounded">
-                <input type="text" id="toy-age" placeholder="Age Range" required class="border p-2 rounded">
-                <input type="text" id="toy-dimensions" placeholder="Dimensions" required class="border p-2 rounded">
-                <input type="text" id="toy-height" placeholder="Height" required class="border p-2 rounded">
-                <input type="text" id="toy-weight" placeholder="Weight" required class="border p-2 rounded">
-                <textarea id="toy-desc" placeholder="Description" required class="border p-2 rounded col-span-full"></textarea>
-                
-                <button type="submit" id="form-submit-btn" class="bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition col-span-full">Add Toy to Database</button>
-                <button type="button" id="cancel-edit-btn" onclick="cancelEdit()" class="hidden bg-gray-500 text-white font-bold py-2 px-4 rounded hover:bg-gray-600 transition col-span-full md:col-span-1">Cancel Edit</button>
-            </form>
+        <div class="admin-nav-title-container">
+            <h1 class="admin-title-text">Toy Shop Admin Dashboard</h1>
         </div>
 
-        <!-- Toy Catalog List -->
-        <div class="bg-white p-6 rounded-lg shadow-md">
-            <h2 class="text-lg font-bold mb-4 text-gray-800">Existing Toy Inventory</h2>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
+        <div class="admin-nav-right">
+            <div class="user-profile-info">
+                <i class="fa-solid fa-user"></i>
+                <span id="welcome-user"></span>
+            </div>
+            <button id="logout-btn" class="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </header>
+
+    <main class="admin-container">
+        <!-- Add / Edit Toy Section -->
+        <section class="admin-card">
+            <h2 id="form-title">
+                Add New Toy
+            </h2>
+            <form id="add-toy-form" class="toy-form">
+                <input
+                    type="text"
+                    id="toy-title"
+                    placeholder="Title"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-brand"
+                    placeholder="Brand"
+                    required>
+
+                <input
+                    type="number"
+                    id="toy-year"
+                    placeholder="Year"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-genre"
+                    placeholder="Genre (e.g., Action Figures)"
+                    required>
+
+                <input
+                    type="number"
+                    step="0.01"
+                    id="toy-price"
+                    placeholder="Price ($)"
+                    required>
+
+                <input
+                    type="number"
+                    id="toy-stock"
+                    placeholder="Stock Quantity"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-image"
+                    placeholder="Image URL filename"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-rating"
+                    placeholder="Rating (e.g., 4.8)"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-age"
+                    placeholder="Age Range"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-dimensions"
+                    placeholder="Dimensions"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-height"
+                    placeholder="Height"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-weight"
+                    placeholder="Weight"
+                    required>
+
+                <textarea
+                    id="toy-desc"
+                    placeholder="Description"
+                    required></textarea>
+
+                <button
+                    type="submit"
+                    id="form-submit-btn"
+                    class="add-toy-btn">
+                    Add Toy to Database
+                </button>
+
+                <button
+                    type="button"
+                    id="cancel-edit-btn"
+                    onclick="cancelEdit()"
+                    class="cancel-edit-btn hidden">
+                    Cancel Edit
+                </button>
+            </form>
+        </section>
+
+        <!-- Toy Inventory -->
+        <section class="admin-card inventory-card">
+            <h2>
+                Existing Toy Inventory
+            </h2>
+
+            <div class="inventory-table-wrapper">
+                <table class="inventory-table">
                     <thead>
-                        <tr class="bg-gray-200 text-gray-700">
-                            <th class="p-3 border">ID</th>
-                            <th class="p-3 border">Title</th>
-                            <th class="p-3 border">Brand</th>
-                            <th class="p-3 border">Price</th>
-                            <th class="p-3 border">Stock</th>
-                            <th class="p-3 border">Actions</th>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Brand</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="toy-table-body">
-                        <!-- Populated via JavaScript -->
+                        <!-- Populated by JavaScript -->
                     </tbody>
                 </table>
             </div>
+        </section>
+    </main>
+
+    <!-- ERROR MODAL OVERLAY -->
+    <div id="error-modal" class="toy-details-modal hidden">
+    <div class="toy-details-container error-modal-container">
+        <div class="toy-details-header">
+            <h2>Validation Error</h2>
+            <button type="button" class="toy-details-close" onclick="closeErrorModal()">&times;</button>
+        </div>
+        <div class="toy-details-content error-modal-content">
+            <div class="error-card-box clean-error-box">
+                <i class="fa-solid fa-triangle-exclamation error-modal-icon"></i>
+                <h3 id="error-modal-title">Whoops! Something went wrong.</h3>
+                <p id="error-modal-message">Error details go here...</p>
+            </div>
+        </div>
+        <div class="toy-details-footer">
+            <button type="button" class="toy-details-button error-modal-btn" onclick="closeErrorModal()">Okay</button>
         </div>
     </div>
+    </div>
 
-    <!-- Load external admin script -->
+    <!-- SUCCESS MODAL OVERLAY -->
+<div id="success-modal" class="toy-details-modal hidden">
+    <div class="toy-details-container success-modal-container">
+        <div class="toy-details-header">
+            <h2>Success</h2>
+            <button type="button" class="toy-details-close" onclick="closeSuccessModal()">&times;</button>
+        </div>
+        <div class="toy-details-content success-modal-content">
+            <div class="success-box">
+                <i class="fa-solid fa-circle-check success-modal-icon"></i>
+                <h3 id="success-modal-title">Success!</h3>
+                <p id="success-modal-message">Toy successfully saved to the database.</p>
+            </div>
+        </div>
+        <div class="toy-details-footer">
+            <button type="button" class="toy-details-button success-modal-btn" onclick="closeSuccessModal()">Okay</button>
+        </div>
+    </div>
+    </div>
+
+    <!-- Toy Details Modal -->
+    <div id="toy-details-modal" class="toy-details-modal hidden">
+        <div class="toy-details-container">
+            <div class="toy-details-header">
+                <h2 id="details-title">
+                    Toy Details
+                </h2>
+
+                <button
+                    type="button"
+                    onclick="closeToyDetails()"
+                    class="toy-details-close">
+                    &times;
+                </button>
+            </div>
+
+            <div class="toy-details-content">
+                <div class="toy-details-grid">
+                    <div class="toy-detail-item">
+                        <span>ID</span>
+                        <p id="details-id"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Title</span>
+                        <p id="details-title-value"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Brand</span>
+                        <p id="details-brand"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Year</span>
+                        <p id="details-year"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Genre</span>
+                        <p id="details-genre"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Price</span>
+                        <p id="details-price"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Stock</span>
+                        <p id="details-stock"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Rating</span>
+                        <p id="details-rating"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Age Range</span>
+                        <p id="details-age"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Dimensions</span>
+                        <p id="details-dimensions"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Height</span>
+                        <p id="details-height"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Weight</span>
+                        <p id="details-weight"></p>
+                    </div>
+
+                    <div class="toy-detail-item toy-detail-full">
+                        <span>Image</span>
+                        <p id="details-image"></p>
+                    </div>
+
+                    <div class="toy-detail-item toy-detail-full">
+                        <span>Description</span>
+                        <p id="details-description"></p>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="toy-details-footer">
+
+                <button
+                    type="button"
+                    onclick="closeToyDetails()"
+                    class="toy-details-button">
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+    <footer>
+        <img
+            src="images/nav_logo.png"
+            alt="Clyde's Toy Shop Logo"
+            class="brand-logo-img">
+
+        <p>
+            &copy; 2026 Clyde's Toy Shop. All rights reserved.
+        </p>
+    </footer>
+
+
+    <script src="config.js"></script>
     <script src="admin.js"></script>
+
 </body>
 </html>

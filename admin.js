@@ -1,24 +1,51 @@
-// admin.js - Secure Admin Dashboard Logic (with Edit/Update support)
-
-const API_BASE = CONFIG.API_URL; 
+const API_BASE = CONFIG.API_URL;
 const API_KEY = CONFIG.API_KEY;
 
-// Track whether we are currently editing a toy, and store loaded toys locally
 let editingToyId = null;
 let toysCache = [];
 
-// 1. Guard check: Kick back to login if not authenticated
-if (localStorage.getItem("isStaffLoggedIn") !== "true") {
+// ============================================================ */
+// MODAL HELPER FUNCTIONS (DEFINED FIRST SO THEY CAN BE CALLED)  */
+// ============================================================ */
+
+function showSuccessModal(message) {
+    document.getElementById("success-modal-message").textContent = message;
+    document.getElementById("success-modal").classList.remove("hidden");
+}
+
+function closeSuccessModal() {
+    document.getElementById("success-modal").classList.add("hidden");
+    cancelEdit();
+    loadToys();
+}
+
+function showErrorModal(message) {
+    document.getElementById("error-modal-message").textContent = message;
+    document.getElementById("error-modal").classList.remove("hidden");
+}
+
+function closeErrorModal() {
+    document.getElementById("error-modal").classList.add("hidden");
+}
+
+// Expose modal helpers globally
+window.closeSuccessModal = closeSuccessModal;
+window.closeErrorModal = closeErrorModal;
+
+// 1. Guard check
+if (localStorage.getItem("isLoggedIn") !== "true" || localStorage.getItem("userRole") !== "staff") {
     window.location.href = "login.html";
 } else {
     const welcomeUser = document.getElementById("welcome-user");
+
     if (welcomeUser) {
-        welcomeUser.textContent = `Logged in as: ${localStorage.getItem("staffUsername")}`;
+        welcomeUser.textContent = `${localStorage.getItem("currentUser")}`;
     }
 }
 
 // 2. Logout handler
 const logoutBtn = document.getElementById("logout-btn");
+
 if (logoutBtn) {
     logoutBtn.addEventListener("click", () => {
         localStorage.clear();
@@ -26,39 +53,63 @@ if (logoutBtn) {
     });
 }
 
-// 3. Fetch and render toys (Sorted numerically by ID)
+// 3. Stock status badge
+function getStockBadge(stock) {
+    const quantity = Number(stock) || 0;
+
+    if (quantity === 0) {
+        return `<span class="stock-badge stock-out">Out of Stock</span>`;
+    }
+
+    if (quantity <= 5) {
+        return `<span class="stock-badge stock-low">Low Stock (${quantity})</span>`;
+    }
+
+    return `<span class="stock-badge stock-good">In Stock (${quantity})</span>`;
+}
+
+// 4. Fetch and render toys
 async function loadToys() {
     try {
         const res = await fetch(`${API_BASE}/toys`, {
             headers: { "x-api-key": API_KEY }
         });
-        
+
         let data = await res.json();
+
         toysCache = Array.isArray(data) ? data : (data.toys || data.data || []);
 
-        // Sort items numerically by ID (1, 2, 3...)
         toysCache.sort((a, b) => a.id - b.id);
 
         const tbody = document.getElementById("toy-table-body");
+
         if (!tbody) return;
+
         tbody.innerHTML = "";
 
         if (toysCache.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">No toys found in the database.</td></tr>`;
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="6" style="padding: 16px; text-align: center; color: #6b7280;">
+                        No toys found in the database.
+                    </td>
+                </tr>
+            `;
             return;
         }
 
         toysCache.forEach(toy => {
             tbody.innerHTML += `
-                <tr class="border-b hover:bg-gray-50">
-                    <td class="p-3 border">${toy.id}</td>
-                    <td class="p-3 border font-semibold">${toy.title}</td>
-                    <td class="p-3 border">${toy.brand}</td>
-                    <td class="p-3 border">$${toy.price}</td>
-                    <td class="p-3 border">${toy.stock}</td>
-                    <td class="p-3 border">
-                        <button onclick="editToy(${toy.id})" class="bg-yellow-500 text-white px-2 py-1 rounded text-sm hover:bg-yellow-600 mr-1">Edit</button>
-                        <button onclick="deleteToy(${toy.id})" class="bg-red-500 text-white px-2 py-1 rounded text-sm hover:bg-red-600">Delete</button>
+                <tr style="border-bottom: 1px solid #e5e7eb;">
+                    <td style="padding: 12px; border: 1px solid #b3b3b3;">${toy.id}</td>
+                    <td style="padding: 12px; border: 1px solid #b3b3b3; font-weight: 600;">${toy.title}</td>
+                    <td style="padding: 12px; border: 1px solid #b3b3b3;">${toy.brand}</td>
+                    <td style="padding: 12px; border: 1px solid #b3b3b3;">₱${toy.price}</td>
+                    <td style="padding: 12px; border: 1px solid #b3b3b3;">${getStockBadge(toy.stock)}</td>
+                    <td style="padding: 12px; border: 1px solid #b3b3b3;">
+                        <button onclick="viewToy(${toy.id})" style="background: #417bd8; color: #ffffff; border: none; padding: 6px 10px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; margin-right: 4px;">View</button>
+                        <button onclick="editToy(${toy.id})" style="background: #f5c02e; color: #ffffff; border: none; padding: 6px 10px; border-radius: 8px; font-size: 0.75rem; cursor: pointer; margin-right: 4px;">Edit</button>
+                        <button onclick="deleteToy(${toy.id})" style="background: #d84141; color: #ffffff; border: none; padding: 6px 10px; border-radius: 8px; font-size: 0.75rem; cursor: pointer;">Delete</button>
                     </td>
                 </tr>
             `;
@@ -68,14 +119,44 @@ async function loadToys() {
     }
 }
 
-// 4. Populate form with toy details for editing
+// 5. View toy details
+function viewToy(id) {
+    const toy = toysCache.find(t => t.id === id);
+
+    if (!toy) return;
+
+    document.getElementById("details-title").textContent = toy.title || "Toy Details";
+    document.getElementById("details-id").textContent = toy.id ?? "";
+    document.getElementById("details-title-value").textContent = toy.title || "";
+    document.getElementById("details-brand").textContent = toy.brand || "";
+    document.getElementById("details-year").textContent = toy.year || "";
+    document.getElementById("details-genre").textContent = toy.genre || "";
+    document.getElementById("details-price").textContent = toy.price !== undefined && toy.price !== null ? `$${toy.price}` : "";
+    document.getElementById("details-stock").innerHTML = getStockBadge(toy.stock);
+    document.getElementById("details-rating").textContent = toy.rating || "";
+    document.getElementById("details-age").textContent = toy.age_range || "";
+    document.getElementById("details-dimensions").textContent = toy.dimensions || "";
+    document.getElementById("details-height").textContent = toy.height || "";
+    document.getElementById("details-weight").textContent = toy.weight || "";
+    document.getElementById("details-image").textContent = toy.image || "";
+    document.getElementById("details-description").textContent = toy.description || "";
+
+    document.getElementById("toy-details-modal").classList.remove("hidden");
+}
+
+// 6. Close toy details modal
+function closeToyDetails() {
+    document.getElementById("toy-details-modal").classList.add("hidden");
+}
+
+// 7. Populate form with toy details for editing
 function editToy(id) {
     const toy = toysCache.find(t => t.id === id);
+
     if (!toy) return;
 
     editingToyId = toy.id;
 
-    // Fill inputs with existing data
     document.getElementById("toy-title").value = toy.title || "";
     document.getElementById("toy-brand").value = toy.brand || "";
     document.getElementById("toy-year").value = toy.year || "";
@@ -90,40 +171,48 @@ function editToy(id) {
     document.getElementById("toy-weight").value = toy.weight || "";
     document.getElementById("toy-desc").value = toy.description || "";
 
-    // Update UI headers and button states
     document.getElementById("form-title").textContent = `Edit Toy (ID: ${toy.id})`;
+
     const submitBtn = document.getElementById("form-submit-btn");
     submitBtn.textContent = "Update Toy in Database";
-    submitBtn.className = "bg-yellow-600 text-white font-bold py-2 px-4 rounded hover:bg-yellow-700 transition col-span-full md:col-span-2";
-    
+    submitBtn.className = "add-toy-btn update-mode-btn";
+
     document.getElementById("cancel-edit-btn").classList.remove("hidden");
 
-    // Scroll smoothly up to the form
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
 }
 
-// Cancel edit mode and reset form
+// 8. Cancel edit mode
 function cancelEdit() {
     editingToyId = null;
+
     document.getElementById("add-toy-form").reset();
     document.getElementById("form-title").textContent = "Add New Toy";
+
     const submitBtn = document.getElementById("form-submit-btn");
     submitBtn.textContent = "Add Toy to Database";
-    submitBtn.className = "bg-green-600 text-white font-bold py-2 px-4 rounded hover:bg-green-700 transition col-span-full";
+    submitBtn.className = "add-toy-btn";
+
     document.getElementById("cancel-edit-btn").classList.add("hidden");
 }
 
-// Expose cancelEdit globally so the HTML button can trigger it
+// Expose general functions globally
 window.cancelEdit = cancelEdit;
 window.editToy = editToy;
+window.viewToy = viewToy;
+window.closeToyDetails = closeToyDetails;
 window.deleteToy = deleteToy;
 
-// 5. Handle Form Submission (Smart routing: POST for create, PUT for update)
+// 9. Handle form submission
 const addToyForm = document.getElementById("add-toy-form");
+
 if (addToyForm) {
     addToyForm.addEventListener("submit", async (e) => {
         e.preventDefault();
-        
+
         const toyPayload = {
             title: document.getElementById("toy-title").value,
             brand: document.getElementById("toy-brand").value,
@@ -143,11 +232,9 @@ if (addToyForm) {
         let url = `${API_BASE}/toys`;
         let method = "POST";
 
-        // If we are editing, target the specific item endpoint with PUT
         if (editingToyId !== null) {
             url = `${API_BASE}/toys/${editingToyId}`;
             method = "PUT";
-            // Include ID in payload if required by Pydantic model during updates
             toyPayload.id = editingToyId;
         }
 
@@ -162,21 +249,29 @@ if (addToyForm) {
             });
 
             if (res.ok) {
-                alert(editingToyId ? "Toy successfully updated!" : "Toy successfully added!");
-                cancelEdit();
-                loadToys();
+                const successMsg = editingToyId ? "Toy successfully updated!" : "Toy successfully added!";
+                showSuccessModal(successMsg);
             } else {
                 const errData = await res.json();
-                alert("Error: " + JSON.stringify(errData.detail));
+                
+                // Parse FastAPI/Pydantic validation error cleanly for the modal
+                let errorMessage = "";
+                if (Array.isArray(errData.detail)) {
+                    errorMessage = errData.detail.map(err => `${err.loc.join(' -> ')}: ${err.msg}`).join('\n');
+                } else {
+                    errorMessage = JSON.stringify(errData.detail || errData, null, 2);
+                }
+
+                showErrorModal(errorMessage);
             }
         } catch (err) {
             console.error("Submission failed:", err);
-            alert("Network error occurred while saving toy.");
+            showErrorModal("Network error occurred while saving toy.");
         }
     });
 }
 
-// 6. Handle Delete Toy Action
+// 10. Handle Delete Toy Action
 async function deleteToy(id) {
     if (!confirm(`Are you sure you want to delete Toy ID ${id}?`)) return;
 
@@ -190,10 +285,11 @@ async function deleteToy(id) {
             alert("Toy deleted successfully.");
             loadToys();
         } else {
-            alert("Failed to delete toy.");
+            showErrorModal("Failed to delete toy from database.");
         }
     } catch (err) {
         console.error("Delete failed:", err);
+        showErrorModal("Network error occurred while deleting toy.");
     }
 }
 

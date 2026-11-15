@@ -3,28 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clyde's Toy Shop - Staff Login</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Clyde's Toy Shop - Login</title>
+
+    <link rel="stylesheet" href="style.css">
     <!-- Load config.js first -->
     <script src="config.js"></script>
-</head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
 
-    <div class="bg-white p-8 rounded-lg shadow-md w-96">
-        <h2 class="text-2xl font-bold mb-6 text-center text-gray-800">Staff Portal Login</h2>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="login-body">
+
+    <div class="login-card">
+        <img src="images/nav_logo3.png" alt="Clyde's Toy Shop Logo" class="brand-logo-img">
+        <h2 class="login-title">Log in</h2>
         
-        <div id="error-msg" class="hidden mb-4 p-3 bg-red-100 text-red-700 rounded text-sm"></div>
+        <div id="error-msg" class="error-msg-box hidden">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span id="error-text"></span>
+        </div>
 
         <form id="login-form">
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Username</label>
-                <input type="text" id="username" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <div class="login-form-group">
+                <label class="login-label">Username</label>
+                <input type="text" id="username" required class="login-input">
             </div>
-            <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2">Password</label>
-                <input type="password" id="password" required class="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <div class="login-form-group mb-large">
+                <label class="login-label">Password</label>
+                <input type="password" id="password" required class="login-input">
             </div>
-            <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 transition">
+            <button type="submit" class="login-submit-btn">
                 Login
             </button>
         </form>

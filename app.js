@@ -387,3 +387,28 @@ if (searchQuery && document.getElementById("searchInput")) {
     document.getElementById("searchInput").value = searchQuery;
     searchToys();
 }
+
+// CUSTOMER LOGIN STATE MANAGEMENT
+
+// Check if user is logged in on page load
+window.addEventListener("DOMContentLoaded", () => {
+    const currentUser = localStorage.getItem("currentUser");
+    const userRole = localStorage.getItem("userRole");
+    
+    const loginBtn = document.querySelector(".nav-right .nav-btn");
+    
+    if (currentUser && loginBtn) {
+        loginBtn.innerHTML = `<i class="fa-solid fa-user" style="margin-right: 8px;"></i> ${currentUser} (${userRole})`;
+        loginBtn.onclick = () => {
+            if (confirm("Do you want to log out?")) {
+                localStorage.removeItem("currentUser");
+                localStorage.removeItem("userRole");
+                window.location.reload();
+            }
+        };
+    } else if (loginBtn) {
+        loginBtn.onclick = () => {
+            window.location.href = "login.html";
+        };
+    }
+});
