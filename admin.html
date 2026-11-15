@@ -201,6 +201,27 @@
     </div>
     </div>
 
+    <!-- DELETE CONFIRMATION MODAL OVERLAY -->
+<div id="delete-confirm-modal" class="toy-details-modal hidden">
+    <div class="toy-details-container error-modal-container">
+        <div class="toy-details-header">
+            <h2>Caution</h2>
+            <button type="button" class="toy-details-close" onclick="closeDeleteModal()">&times;</button>
+        </div>
+        <div class="toy-details-content error-modal-content">
+            <div class="error-card-box clean-error-box">
+                <i class="fa-solid fa-triangle-exclamation error-modal-icon"></i>
+                <h3 id="delete-modal-title">Are you sure you want to delete this record?</h3>
+                <p id="delete-modal-message" style="color: #6b7280; font-size: 0.95rem; margin: 0; word-break: break-word;">This action cannot be undone.</p>
+            </div>
+        </div>
+        <div class="toy-details-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button type="button" class="toy-details-button" onclick="closeDeleteModal()" style="background: #6b7280;">Cancel</button>
+            <button type="button" class="toy-details-button" id="confirm-delete-btn" style="background: #e63946;">Delete</button>
+        </div>
+    </div>
+    </div>
+
     <!-- Toy Details Modal -->
     <div id="toy-details-modal" class="toy-details-modal hidden">
         <div class="toy-details-container">

@@ -271,26 +271,47 @@ if (addToyForm) {
     });
 }
 
-// 10. Handle Delete Toy Action
+let toyIdToDelete = null;
+
+// Open and close delete confirmation modal helpers
+function closeDeleteModal() {
+    toyIdToDelete = null;
+    document.getElementById("delete-confirm-modal").classList.add("hidden");
+}
+
+window.closeDeleteModal = closeDeleteModal;
+
+// 10. Handle Delete Toy Action (Updated with custom modal)
 async function deleteToy(id) {
-    if (!confirm(`Are you sure you want to delete Toy ID ${id}?`)) return;
+    toyIdToDelete = id;
+    document.getElementById("delete-confirm-modal").classList.remove("hidden");
+}
 
-    try {
-        const res = await fetch(`${API_BASE}/toys/${id}`, {
-            method: "DELETE",
-            headers: { "x-api-key": API_KEY }
-        });
+// Bind confirmation action listener once DOM is loaded or at the script scope
+const confirmDeleteBtn = document.getElementById("confirm-delete-btn");
+if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener("click", async () => {
+        if (toyIdToDelete === null) return;
 
-        if (res.ok) {
-            alert("Toy deleted successfully.");
-            loadToys();
-        } else {
-            showErrorModal("Failed to delete toy from database.");
+        const id = toyIdToDelete;
+        closeDeleteModal();
+
+        try {
+            const res = await fetch(`${API_BASE}/toys/${id}`, {
+                method: "DELETE",
+                headers: { "x-api-key": API_KEY }
+            });
+
+            if (res.ok) {
+                showSuccessModal("Toy deleted successfully.");
+            } else {
+                showErrorModal("Failed to delete toy from database.");
+            }
+        } catch (err) {
+            console.error("Delete failed:", err);
+            showErrorModal("Network error occurred while deleting toy.");
         }
-    } catch (err) {
-        console.error("Delete failed:", err);
-        showErrorModal("Network error occurred while deleting toy.");
-    }
+    });
 }
 
 // Initial load
