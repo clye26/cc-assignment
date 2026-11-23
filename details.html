@@ -28,13 +28,21 @@
         </div>
 
         <div class="nav-right">
-            <button class="nav-btn">
+            <button type="button" class="nav-btn" id="navAuthBtn">
                 <i class="fa-solid fa-user"></i>
                 Login / Signup
             </button>
-            <button class="nav-btn cart-btn">
+            <button type="button" class="nav-btn cart-btn" id="navCartBtn" onclick="openCartModal()">
                 <i class="fa-solid fa-cart-shopping"></i>
                 Cart
+            </button>
+            <button type="button" class="nav-btn wishlist-nav-btn" id="navWishlistBtn" onclick="openWishlistModal()">
+                <i class="fa-solid fa-heart"></i>
+                Wishlist
+            </button>
+            <button type="button" class="nav-btn orders-nav-btn" id="navOrdersBtn" onclick="openOrdersModal()">
+                <i class="fa-solid fa-box"></i>
+                Orders
             </button>
         </div>
     </header>
@@ -48,17 +56,195 @@
         </div>
     </main>
 
-    <script src="config.js"></script>
-    <script src="app.js"></script>
-    <script>
-        // Automatically fetch details when this page loads
-        fetchToyDetails();
-    </script>
+    <!-- CART, WISHLIST, AND ORDERS MODAL -->
+    <div id="customer-shop-modal" class="shop-modal-overlay hidden">
+        <div class="shop-modal-container">
+            <div class="shop-modal-header">
+                <h2 id="shop-modal-title">Shopping Cart</h2>
+                <button type="button" class="shop-modal-close" onclick="closeShopModal()">&times;</button>
+            </div>
+
+            <div class="shop-modal-tabs">
+                <button type="button" class="shop-tab-btn" id="tab-cart" onclick="openCartModal()">
+                    <i class="fa-solid fa-cart-shopping"></i> Cart
+                </button>
+                <button type="button" class="shop-tab-btn" id="tab-wishlist" onclick="openWishlistModal()">
+                    <i class="fa-solid fa-heart"></i> Wishlist
+                </button>
+                <button type="button" class="shop-tab-btn" id="tab-orders" onclick="openOrdersModal()">
+                    <i class="fa-solid fa-box"></i> My Orders
+                </button>
+            </div>
+
+            <div id="shop-modal-body" class="shop-modal-body">
+                <p>Loading...</p>
+            </div>
+
+            <div id="shop-modal-footer" class="shop-modal-footer">
+                <div id="shop-modal-total" class="shop-modal-total"></div>
+                <div class="shop-modal-actions">
+                    <button type="button" id="checkout-btn" class="shop-primary-btn hidden" onclick="checkoutCart()">
+                        Place Order
+                    </button>
+                    <button type="button" class="shop-secondary-btn" onclick="closeShopModal()">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOMER FEEDBACK MODAL OVERLAY -->
+    <div id="customer-feedback-modal" class="toy-details-modal hidden">
+    <div class="toy-details-container customer-feedback-modal-container">
+        <div class="toy-details-header">
+            <h2 id="customer-feedback-title">Success</h2>
+            <button
+                type="button"
+                class="toy-details-close"
+                onclick="closeCustomerFeedbackModal()">
+                &times;
+            </button>
+        </div>
+
+        <div class="toy-details-content customer-feedback-modal-content">
+            <div class="customer-feedback-box">
+                <i
+                    id="customer-feedback-icon"
+                    class="fa-solid fa-circle-check customer-feedback-icon">
+                </i>
+                <h3 id="customer-feedback-message-title">
+                    Success!
+                </h3>
+                <p id="customer-feedback-message">
+                    Operation completed successfully.
+                </p>
+            </div>
+        </div>
+        <div class="toy-details-footer customer-feedback-footer">
+            <button
+                type="button"
+                id="customer-feedback-ok-btn"
+                class="toy-details-button customer-feedback-ok-btn"
+                onclick="closeCustomerFeedbackModal()">
+                Okay
+            </button>
+        </div>
+    </div>
+    </div>
+
+    <!-- LOGOUT CONFIRMATION MODAL OVERLAY -->
+    <div id="logout-confirm-modal" class="toy-details-modal hidden">
+    <div class="toy-details-container logout-confirm-modal-container">
+        <div class="toy-details-header">
+            <h2>Logout</h2>
+            <button
+                type="button"
+                class="toy-details-close"
+                onclick="closeLogoutModal()">
+                &times;
+            </button>
+        </div>
+        <div class="toy-details-content logout-confirm-modal-content">
+            <div class="customer-feedback-box">
+                <i class="fa-solid fa-right-from-bracket logout-modal-icon"></i>
+                <h3>Do you want to log out?</h3>
+                <p>
+                    You will be returned to the login page.
+                </p>
+            </div>
+        </div>
+
+        <div class="toy-details-footer logout-confirm-footer">
+            <button
+                type="button"
+                class="toy-details-button logout-cancel-btn"
+                onclick="closeLogoutModal()">
+                Cancel
+            </button>
+            <button
+                type="button"
+                id="confirm-logout-btn"
+                class="toy-details-button logout-confirm-btn">
+                Logout
+            </button>
+        </div>
+    </div>
+    </div>
 
     <!-- FOOTER -->
     <footer>
         <img src="images/nav_logo.png" alt="Clyde's Toy Shop Logo" class="brand-logo-img">
         <p>&copy; 2026 Clyde's Toy Shop. All rights reserved.</p>
     </footer>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+
+     <script>
+        // Update the navbar login button on the details page
+        const loginBtn = document.getElementById("navAuthBtn");
+
+        const currentUser = localStorage.getItem("currentUser");
+        const userRole = localStorage.getItem("userRole");
+        const userId = localStorage.getItem("userId");
+        const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+        if (loginBtn) {
+            const validCustomerSession =
+                isLoggedIn &&
+                userRole === "customer" &&
+                currentUser &&
+                userId;
+
+            const validStaffSession =
+                isLoggedIn &&
+                userRole === "staff" &&
+                currentUser;
+
+            if (validCustomerSession) {
+                loginBtn.innerHTML = `
+                    <i class="fa-solid fa-user"></i>
+                    ${currentUser}
+                `;
+                loginBtn.onclick = () => {
+                    if (confirm("Do you want to log out?")) {
+                        localStorage.removeItem("isLoggedIn");
+                        localStorage.removeItem("currentUser");
+                        localStorage.removeItem("userRole");
+                        localStorage.removeItem("userId");
+                        window.location.href = "index.html";
+                    }
+                };
+            } else if (validStaffSession) {
+
+                loginBtn.innerHTML = `
+                    <i class="fa-solid fa-user"></i>
+                    ${currentUser} (staff)
+                `;
+                loginBtn.onclick = () => {
+                    if (confirm("Do you want to log out?")) {
+                        localStorage.removeItem("isLoggedIn");
+                        localStorage.removeItem("currentUser");
+                        localStorage.removeItem("userRole");
+                        localStorage.removeItem("userId");
+                        window.location.href = "login.html";
+                    }
+                };
+            } else {
+                loginBtn.innerHTML = `
+                    <i class="fa-solid fa-user"></i>
+                    Login / Signup
+                `;
+                loginBtn.onclick = () => {
+                    window.location.href = "login.html";
+                };
+            }
+        }
+
+        // Load the selected toy
+        fetchToyDetails();
+    </script>
+
 </body>
 </html>

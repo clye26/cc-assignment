@@ -7,10 +7,35 @@ const FETCH_OPTIONS = {
   headers: { "x-api-key": API_KEY }
 };
 
+function getJsonHeaders() {
+    return {
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY
+    };
+}
+
+// AUTHENTICATION CHECK FOR CUSTOMER-ONLY PAGES
+function requireCustomerId() {
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+    const userId = localStorage.getItem("userId");
+    const role = localStorage.getItem("userRole");
+
+    if (!isLoggedIn || !userId || role !== "customer") {
+        showCustomerWarningModal(
+        "Please log in with a customer account to use Cart, Wishlist, and Orders.",
+        "Login Required"
+        );
+        return null;
+    }
+    return Number(userId);
+}
+
 // GET ALL TOYS
 async function loadToys() {
+    const toyList = document.getElementById("toyList");
+    if (!toyList) return; // Prevents running on details.html
+
     const errorBanner = document.getElementById("error-banner");
-    const errorMessage = document.getElementById("error-message");
 
     try {
         const response = await fetch(`${API_URL}/toys`, FETCH_OPTIONS);
@@ -74,32 +99,43 @@ function displayToys(toys) {
     const isOut = toy.stock === 0; // Check if out of stock
 
     card.innerHTML = `
-        <img src="${toy.image}" alt="${toy.title}" class="toy-card-img">
-        <h3>${toy.title}</h3>
-        <p class="toy-brand">${toy.brand}</p>
-        <div class="toy-card-star-rating">
-            ${renderCSSStars(toy.rating)}
-        </div>
-        <p class="toy-price">₱${toy.price.toFixed(2)}</p>
-        <button class="add-to-bag-btn" ${isOut ? 'disabled style="background-color: #ccc; cursor: not-allowed;"' : ''}>
-            ${isOut ? 'Out of Stock' : 'Add to Cart'}
-        </button>
-    `;
+            <img src="${toy.image}" alt="${toy.title}" class="toy-card-img">
+            <h3>${toy.title}</h3>
+            <p class="toy-brand">${toy.brand}</p>
+            <div class="toy-card-star-rating">
+                ${renderCSSStars(toy.rating)}
+            </div>
+            <p class="toy-price">₱${Number(toy.price).toFixed(2)}</p>
+            <div class="card-action-row">
+                <button type="button" class="add-to-bag-btn" ${isOut ? 'disabled style="background-color: #ccc; cursor: not-allowed;"' : ''}>
+                    ${isOut ? 'Out of Stock' : 'Add to Cart'}
+                </button>
+                <button type="button" class="card-wishlist-btn" title="Add to Wishlist">
+                    <i class="fa-solid fa-heart"></i>
+                </button>
+            </div>
+        `;
 
-    // Clicking the card body goes to details
-    card.addEventListener("click", () => {
-        viewToy(toy.id);
-    });
+        // Clicking card body opens details
+        card.addEventListener("click", () => {
+            viewToy(toy.id);
+        });
 
-    // Clicking the Add to Cart button prevents card redirection
-    const addBtn = card.querySelector(".add-to-bag-btn");
-    addBtn.addEventListener("click", (event) => {
-        event.stopPropagation();
-        
-        // Don't add to cart if out of stock
-        if (isOut) return; 
-            alert(`Added ${toy.title} to cart!`);
-    });
+        // Connect Add to Cart button -> POST /api/v1/cart
+        const addBtn = card.querySelector(".add-to-bag-btn");
+        addBtn.addEventListener("click", async (event) => {
+            event.stopPropagation();
+            if (isOut) return;
+            await addToCartAPI(toy.id, 1);
+        });
+
+        // Connect Card Wishlist button -> POST /api/v1/wishlist
+        const wishBtn = card.querySelector(".card-wishlist-btn");
+        wishBtn.addEventListener("click", async (event) => {
+            event.stopPropagation();
+            await addToWishlistAPI(toy.id);
+        });
+
         toyList.appendChild(card);
     });
 }
@@ -219,7 +255,6 @@ async function fetchToyDetails() {
             </div>
         `;
 
-        // Event Listeners for Quantity (Passing toy.price)
         document.getElementById("increaseQtyBtn").addEventListener("click", () => {
             increaseQty(toy.stock, toy.price);
         });
@@ -228,14 +263,16 @@ async function fetchToyDetails() {
             decreaseQty(toy.price);
         });
 
-        // Event Listeners for catching apostrophes/special characters title errors
-        document.getElementById("detailAddBtn").addEventListener("click", () => {
-            const qty = document.getElementById("qtyInput").value;
-            alert("Added " + qty + " x " + toy.title + " to cart!");
+        // Connect Details Add to Cart -> POST /api/v1/cart
+        document.getElementById("detailAddBtn").addEventListener("click", async () => {
+            if (isOut) return;
+            const qty = parseInt(document.getElementById("qtyInput").value, 10) || 1;
+            await addToCartAPI(toy.id, qty);
         });
 
-        document.getElementById("detailWishlistBtn").addEventListener("click", () => {
-            alert("Added " + toy.title + " to Wishlist!");
+        // Connect Details Wishlist -> POST /api/v1/wishlist
+        document.getElementById("detailWishlistBtn").addEventListener("click", async () => {
+            await addToWishlistAPI(toy.id);
         });
 
     } catch (error) {
@@ -323,6 +360,446 @@ async function searchToys() {
     }
 }
 
+// ============================================================
+// WISHLIST API & MODAL (GET, POST, DELETE /api/v1/wishlist)
+// ============================================================
+async function addToWishlistAPI(toyId) {
+    const userId = requireCustomerId();
+    if (!userId) return;
+
+    try {
+        const res = await fetch(`${API_URL}/wishlist`, {
+            method: "POST",
+            headers: getJsonHeaders(),
+            body: JSON.stringify({
+                user_id: userId,
+                toy_id: Number(toyId)
+            })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.detail || "Failed to add to wishlist.");
+        }
+
+        showCustomerSuccessModal(
+            data.message || "Item added to your wishlist!",
+            "Added to Wishlist"
+        );
+
+    } catch (err) {
+        console.error(err);
+
+        if (
+            err.message &&
+            err.message.toLowerCase().includes("already")
+        ) {
+            showCustomerWarningModal(
+                err.message,
+                "Already in Wishlist"
+            );
+        } else {
+            showCustomerErrorModal(
+                err.message,
+                "Wishlist Error"
+            );
+        }
+    }
+}
+
+async function openWishlistModal() {
+    const userId = requireCustomerId();
+    if (!userId) return;
+
+    setActiveShopTab("tab-wishlist");
+    const modal = document.getElementById("customer-shop-modal");
+    const titleEl = document.getElementById("shop-modal-title");
+    const bodyEl = document.getElementById("shop-modal-body");
+    const totalEl = document.getElementById("shop-modal-total");
+    const checkoutBtn = document.getElementById("checkout-btn");
+
+    titleEl.textContent = "My Wishlist";
+    bodyEl.innerHTML = `<p class="shop-loading">Loading wishlist...</p>`;
+    totalEl.textContent = "";
+    checkoutBtn.classList.add("hidden");
+    modal.classList.remove("hidden");
+
+    try {
+        const res = await fetch(`${API_URL}/wishlist/${userId}`, FETCH_OPTIONS);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to load wishlist.");
+
+        if (!data.items || data.items.length === 0) {
+            bodyEl.innerHTML = `<p class="shop-empty">Your wishlist is currently empty.</p>`;
+            return;
+        }
+
+        bodyEl.innerHTML = data.items.map(row => {
+            const toy = row.toys || {};
+            const isOut = Number(toy.stock || 0) === 0;
+            return `
+                <div class="shop-item-row">
+                    <div class="shop-item-info">
+                        <img src="${toy.image || 'images/errornotoy.png'}" alt="${toy.title || 'Toy'}" class="shop-item-thumb">
+                        <div>
+                            <h4>${toy.title || `Toy #${row.toy_id}`}</h4>
+                            <p class="shop-item-meta">${toy.brand || ''} &bull; ₱${Number(toy.price || 0).toFixed(2)}</p>
+                        </div>
+                    </div>
+                    <div class="shop-item-controls">
+                        <button type="button" class="shop-mini-btn primary" ${isOut ? 'disabled' : ''} onclick="moveWishlistToCart(${row.toy_id})">
+                            ${isOut ? 'Out of Stock' : 'Add to Cart'}
+                        </button>
+                        <button type="button" class="shop-mini-btn danger" onclick="removeWishlistItem(${row.id})">
+                            Remove
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join("");
+    } catch (err) {
+        bodyEl.innerHTML = `<p class="shop-error">${err.message}</p>`;
+    }
+}
+
+async function moveWishlistToCart(toyId) {
+    await addToCartAPI(toyId, 1);
+}
+
+async function removeWishlistItem(wishlistItemId) {
+    try {
+        const res = await fetch(`${API_URL}/wishlist/${wishlistItemId}`, {
+            method: "DELETE",
+            headers: FETCH_OPTIONS.headers
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to remove wishlist item.");
+        openWishlistModal();
+    } catch (err) {
+        alert(err.message);
+    }
+}
+
+// ============================================================
+// CART API & MODAL (GET, POST, PUT, DELETE /api/v1/cart)
+// ============================================================
+async function addToCartAPI(toyId, quantity = 1) {
+    const userId = requireCustomerId();
+    if (!userId) return;
+
+    try {
+        const res = await fetch(`${API_URL}/cart`, {
+            method: "POST",
+            headers: getJsonHeaders(),
+            body: JSON.stringify({
+                user_id: userId,
+                toy_id: Number(toyId),
+                quantity: Number(quantity)
+            })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(data.detail || "Failed to add to cart.");
+        }
+
+        showCustomerSuccessModal(
+            data.message || "Item added to your cart!",
+            "Added to Cart"
+        );
+
+    } catch (err) {
+        console.error(err);
+
+        showCustomerErrorModal(
+            err.message,
+            "Cart Error"
+        );
+    }
+}
+
+async function openCartModal() {
+    const userId = requireCustomerId();
+    if (!userId) return;
+
+    setActiveShopTab("tab-cart");
+    const modal = document.getElementById("customer-shop-modal");
+    const titleEl = document.getElementById("shop-modal-title");
+    const bodyEl = document.getElementById("shop-modal-body");
+    const totalEl = document.getElementById("shop-modal-total");
+    const checkoutBtn = document.getElementById("checkout-btn");
+
+    titleEl.textContent = "Shopping Cart";
+    bodyEl.innerHTML = `<p class="shop-loading">Loading cart...</p>`;
+    totalEl.textContent = "";
+    checkoutBtn.classList.add("hidden");
+    modal.classList.remove("hidden");
+
+    try {
+        const res = await fetch(`${API_URL}/cart/${userId}`, FETCH_OPTIONS);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to load cart.");
+
+        if (!data.items || data.items.length === 0) {
+            bodyEl.innerHTML = `<p class="shop-empty">Your cart is empty. Browse toys to add items!</p>`;
+            totalEl.textContent = "Subtotal: ₱0.00";
+            return;
+        }
+
+        bodyEl.innerHTML = data.items.map(row => {
+            const toy = row.toys || {};
+            const price = Number(toy.price || 0);
+            const qty = Number(row.quantity || 1);
+            const lineTotal = price * qty;
+
+            return `
+                <div class="shop-item-row">
+                    <div class="shop-item-info">
+                        <img src="${toy.image || 'images/errornotoy.png'}" alt="${toy.title || 'Toy'}" class="shop-item-thumb">
+                        <div>
+                            <h4>${toy.title || `Toy #${row.toy_id}`}</h4>
+                            <p class="shop-item-meta">₱${price.toFixed(2)} each &bull; Price: <strong>₱${lineTotal.toFixed(2)}</strong></p>
+                        </div>
+                    </div>
+                    <div class="shop-item-controls">
+                        <button type="button" class="shop-qty-btn" onclick="updateCartQty(${row.id}, ${qty - 1})">
+                            <i class="fa-solid fa-minus"></i>
+                        </button>
+
+                        <span class="shop-qty-value">${qty}</span>
+
+                        <button type="button" class="shop-qty-btn" onclick="updateCartQty(${row.id}, ${qty + 1})">
+                            <i class="fa-solid fa-plus"></i>
+                        </button>
+                        <button type="button" class="shop-mini-btn danger" onclick="removeCartItem(${row.id})">Remove</button>
+                    </div>
+                </div>
+            `;
+        }).join("");
+
+        totalEl.textContent = `Subtotal: ₱${Number(data.subtotal || 0).toFixed(2)}`;
+        checkoutBtn.classList.remove("hidden");
+    } catch (err) {
+        bodyEl.innerHTML = `<p class="shop-error">${err.message}</p>`;
+    }
+}
+
+async function updateCartQty(cartItemId, newQty) {
+    if (newQty <= 0) {
+        await removeCartItem(cartItemId);
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_URL}/cart/${cartItemId}`, {
+            method: "PUT",
+            headers: getJsonHeaders(),
+            body: JSON.stringify({ quantity: Number(newQty) })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to update quantity.");
+        openCartModal();
+    } catch (err) {
+    console.error(err);
+
+    showCustomerErrorModal(
+        err.message,
+        "Cart Error"
+    );
+}
+}
+
+async function removeCartItem(cartItemId) {
+    try {
+        const res = await fetch(`${API_URL}/cart/${cartItemId}`, {
+            method: "DELETE",
+            headers: FETCH_OPTIONS.headers
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to remove cart item.");
+        openCartModal();
+    } catch (err) {
+        alert(err.message);
+    }
+}
+
+// ============================================================
+// ORDERS API & MODAL (POST /orders, GET /orders/user/{id}, GET /orders/{id})
+// ============================================================
+async function checkoutCart() {
+    const userId = requireCustomerId();
+    if (!userId) return;
+
+    try {
+        const res = await fetch(`${API_URL}/orders`, {
+            method: "POST",
+            headers: getJsonHeaders(),
+            body: JSON.stringify({
+                user_id: userId
+            })
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+            throw new Error(
+                data.detail || "Failed to place order."
+            );
+        }
+
+        showCustomerSuccessModal(
+            `Order #${data.order.id} placed successfully! Total: ₱${Number(data.order.total_amount).toFixed(2)}`,
+            "Order Placed"
+        );
+
+        if (document.getElementById("toyList")) {
+            loadToys();
+        }
+
+        if (window.location.pathname.includes("details.html")) {
+            fetchToyDetails();
+        }
+
+        openOrdersModal();
+
+    } catch (err) {
+        console.error(err);
+
+        showCustomerErrorModal(
+            err.message,
+            "Checkout Error"
+        );
+    }
+}
+
+async function openOrdersModal() {
+    const userId = requireCustomerId();
+    if (!userId) return;
+
+    setActiveShopTab("tab-orders");
+    const modal = document.getElementById("customer-shop-modal");
+    const titleEl = document.getElementById("shop-modal-title");
+    const bodyEl = document.getElementById("shop-modal-body");
+    const totalEl = document.getElementById("shop-modal-total");
+    const checkoutBtn = document.getElementById("checkout-btn");
+
+    titleEl.textContent = "My Orders";
+    bodyEl.innerHTML = `<p class="shop-loading">Loading orders...</p>`;
+    totalEl.textContent = "";
+    checkoutBtn.classList.add("hidden");
+    modal.classList.remove("hidden");
+
+    try {
+        const res = await fetch(`${API_URL}/orders/user/${userId}`, FETCH_OPTIONS);
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "Failed to load orders.");
+
+        if (!data.orders || data.orders.length === 0) {
+            bodyEl.innerHTML = `<p class="shop-empty">You haven't placed any orders yet.</p>`;
+            return;
+        }
+
+        bodyEl.innerHTML = data.orders.map(order => {
+            const itemsList = (order.order_items || []).map(item => `
+                <li>${item.toys?.title || `Toy #${item.toy_id}`} &times; ${item.quantity}</li>
+            `).join("");
+
+            return `
+                <div class="order-history-card">
+                    <div class="order-history-header">
+                        <strong>Order #${order.id}</strong>
+                        <span class="order-status-pill status-${order.status}">${order.status}</span>
+                    </div>
+                    <p class="order-history-total">Total: <strong>₱${Number(order.total_amount || 0).toFixed(2)}</strong></p>
+                    <ul class="order-history-items">${itemsList}</ul>
+                    <button type="button" class="shop-mini-btn primary" onclick="viewSingleOrder(${order.id})">
+                        View Order Details
+                    </button>
+                </div>
+            `;
+        }).join("");
+    } catch (err) {
+        bodyEl.innerHTML = `<p class="shop-error">${err.message}</p>`;
+    }
+}
+
+// GET /api/v1/orders/{order_id}
+async function viewSingleOrder(orderId) {
+    const bodyEl = document.getElementById("shop-modal-body");
+    const titleEl = document.getElementById("shop-modal-title");
+
+    titleEl.textContent = `Order #${orderId} Receipt`;
+    bodyEl.innerHTML = `<p class="shop-loading">Loading order details...</p>`;
+
+    try {
+        const res = await fetch(`${API_URL}/orders/${orderId}`, FETCH_OPTIONS);
+        const order = await res.json();
+        if (!res.ok) throw new Error(order.detail || "Order not found.");
+
+        const itemsHtml = (order.order_items || []).map(item => {
+            const toy = item.toys || {};
+            const unitPrice = Number(toy.price || 0);
+            const lineSubtotal = unitPrice * Number(item.quantity || 1);
+            return `
+                <div class="shop-item-row">
+                    <div class="shop-item-info">
+                        <img src="${toy.image || 'images/errornotoy.png'}" alt="${toy.title || 'Toy'}" class="shop-item-thumb">
+                        <div>
+                            <h4>${toy.title || `Toy #${item.toy_id}`}</h4>
+                            <p class="shop-item-meta">${toy.brand || ''} &bull; Qty: ${item.quantity} &times; ₱${unitPrice.toFixed(2)}</p>
+                        </div>
+                    </div>
+                    <strong>₱${lineSubtotal.toFixed(2)}</strong>
+                </div>
+            `;
+        }).join("");
+
+        bodyEl.innerHTML = `
+            <div class="order-receipt-box">
+                <p><strong>Order ID:</strong> #${order.id}</p>
+                <p><strong>Status:</strong> <span class="order-status-pill status-${order.status}">${order.status}</span></p>
+                <p><strong>Order Total:</strong> ₱${Number(order.total_amount || 0).toFixed(2)}</p>
+                <hr style="margin: 12px 0; border: 0; border-top: 1px solid #e5e7eb;">
+                ${itemsHtml}
+                <div style="margin-top: 14px;">
+                    <button type="button" class="shop-secondary-btn" onclick="openOrdersModal()">
+                        &larr; Back to My Orders
+                    </button>
+                </div>
+            </div>
+        `;
+    } catch (err) {
+        bodyEl.innerHTML = `<p class="shop-error">${err.message}</p>`;
+    }
+}
+
+function closeShopModal() {
+    document.getElementById("customer-shop-modal")?.classList.add("hidden");
+}
+
+function setActiveShopTab(activeTabId) {
+    ["tab-cart", "tab-wishlist", "tab-orders"].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.classList.toggle("active", id === activeTabId);
+        }
+    });
+}
+
+// Expose functions globally for inline HTML onclick handlers
+window.openCartModal = openCartModal;
+window.openWishlistModal = openWishlistModal;
+window.openOrdersModal = openOrdersModal;
+window.closeShopModal = closeShopModal;
+window.updateCartQty = updateCartQty;
+window.removeCartItem = removeCartItem;
+window.moveWishlistToCart = moveWishlistToCart;
+window.removeWishlistItem = removeWishlistItem;
+window.checkoutCart = checkoutCart;
+window.viewSingleOrder = viewSingleOrder;
+
 loadToys();
 
 // CAROUSEL IMAGE 
@@ -388,27 +865,215 @@ if (searchQuery && document.getElementById("searchInput")) {
     searchToys();
 }
 
+// ============================================================
 // CUSTOMER LOGIN STATE MANAGEMENT
+// ============================================================
 
-// Check if user is logged in on page load
 window.addEventListener("DOMContentLoaded", () => {
+
     const currentUser = localStorage.getItem("currentUser");
     const userRole = localStorage.getItem("userRole");
-    
-    const loginBtn = document.querySelector(".nav-right .nav-btn");
-    
-    if (currentUser && loginBtn) {
-        loginBtn.innerHTML = `<i class="fa-solid fa-user" style="margin-right: 8px;"></i> ${currentUser} (${userRole})`;
-        loginBtn.onclick = () => {
-            if (confirm("Do you want to log out?")) {
-                localStorage.removeItem("currentUser");
-                localStorage.removeItem("userRole");
-                window.location.reload();
-            }
-        };
-    } else if (loginBtn) {
-        loginBtn.onclick = () => {
-            window.location.href = "login.html";
-        };
+    const userId = localStorage.getItem("userId");
+    const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+
+    /*
+     * Explicitly target the Login / Signup button.
+     * Do NOT use querySelector(".nav-right .nav-btn")
+     * because the navbar contains multiple buttons.
+     */
+    const loginBtn = document.getElementById("navAuthBtn");
+
+    if (!loginBtn) {
+        return;
     }
+
+    /*
+     * A customer is considered properly logged in only when
+     * all required customer session values exist.
+     */
+    const validCustomerSession =
+        isLoggedIn &&
+        userRole === "customer" &&
+        currentUser &&
+        userId;
+
+    /*
+     * Staff login
+     */
+    const validStaffSession =
+        isLoggedIn &&
+        userRole === "staff" &&
+        currentUser;
+
+   if (validCustomerSession) {
+
+    loginBtn.innerHTML = `
+        <i class="fa-solid fa-user"></i>
+        ${currentUser}
+    `;
+
+    loginBtn.onclick = () => {
+        openLogoutModal();
+
+        const confirmLogoutBtn = document.getElementById("confirm-logout-btn");
+
+        if (confirmLogoutBtn) {
+            confirmLogoutBtn.onclick = () => {
+                confirmCustomerLogout();
+            };
+        }
+    };
+
+} else if (validStaffSession) {
+
+    loginBtn.innerHTML = `
+        <i class="fa-solid fa-user"></i>
+        ${currentUser} (staff)
+    `;
+
+    loginBtn.onclick = () => {
+        openLogoutModal();
+
+        const confirmLogoutBtn = document.getElementById("confirm-logout-btn");
+
+        if (confirmLogoutBtn) {
+            confirmLogoutBtn.onclick = () => {
+                confirmCustomerLogout();
+            };
+        }
+    };
+
+} else {
+
+    /*
+     * No valid session.
+     */
+    loginBtn.innerHTML = `
+        <i class="fa-solid fa-user"></i>
+        Login / Signup
+    `;
+
+    loginBtn.onclick = () => {
+        window.location.href = "login.html";
+    };
+}
 });
+
+// ============================================================
+// CUSTOMER FEEDBACK MODAL
+// ============================================================
+
+function showCustomerFeedbackModal(
+    type,
+    title,
+    message,
+    icon = "fa-circle-check"
+) {
+    const modal = document.getElementById("customer-feedback-modal");
+
+    if (!modal) {
+        return;
+    }
+
+    const titleEl = document.getElementById("customer-feedback-title");
+    const messageTitleEl = document.getElementById("customer-feedback-message-title");
+    const messageEl = document.getElementById("customer-feedback-message");
+    const iconEl = document.getElementById("customer-feedback-icon");
+
+    titleEl.textContent = title;
+    messageTitleEl.textContent = title;
+    messageEl.textContent = message;
+
+    iconEl.className =
+    `fa-solid ${icon} customer-feedback-icon`;
+
+modal.classList.remove(
+    "feedback-success",
+    "feedback-warning",
+    "feedback-error"
+);
+
+modal.classList.add(`feedback-${type}`);
+
+modal.classList.remove("hidden");
+}
+
+function closeCustomerFeedbackModal() {
+    const modal = document.getElementById("customer-feedback-modal");
+
+    if (modal) {
+        modal.classList.add("hidden");
+    }
+}
+
+
+// ADD THIS HERE
+window.closeCustomerFeedbackModal = closeCustomerFeedbackModal;
+
+
+// Success
+function showCustomerSuccessModal(message, title = "Success!") {
+    showCustomerFeedbackModal(
+        "success",
+        title,
+        message,
+        "fa-circle-check"
+    );
+}
+
+
+// Error
+function showCustomerErrorModal(message, title = "Something went wrong") {
+    showCustomerFeedbackModal(
+        "error",
+        title,
+        message,
+        "fa-triangle-exclamation"
+    );
+}
+
+
+// Warning / information
+function showCustomerWarningModal(message, title = "Notice") {
+    showCustomerFeedbackModal(
+        "warning",
+        title,
+        message,
+        "fa-circle-exclamation"
+    );
+}
+
+// ============================================================
+// LOGOUT CONFIRMATION MODAL
+// ============================================================
+
+function openLogoutModal() {
+    const modal = document.getElementById("logout-confirm-modal");
+
+    if (modal) {
+        modal.classList.remove("hidden");
+    }
+}
+
+
+function closeLogoutModal() {
+    const modal = document.getElementById("logout-confirm-modal");
+
+    if (modal) {
+        modal.classList.add("hidden");
+    }
+}
+
+
+function confirmCustomerLogout() {
+    localStorage.removeItem("isLoggedIn");
+    localStorage.removeItem("currentUser");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("userId");
+
+    window.location.href = "index.html";
+}
+
+
+window.openLogoutModal = openLogoutModal;
+window.closeLogoutModal = closeLogoutModal;

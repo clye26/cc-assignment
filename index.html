@@ -3,80 +3,400 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clyde's Toy Corner</title>
+    <title>Clyde's Toy Shop - Admin Dashboard</title>
     <link rel="stylesheet" href="style.css">
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
 
-    <!-- TOP NAVIGATION BAR -->
-    <header class="navbar">
+<body class="admin-page">
+
+    <!-- Navbar -->
+    <header class="admin-navbar">
         <div class="nav-left">
-            <a href="index.html" class="logo-link">
-                <img src="images/nav_logo.png" alt="Clyde's Toy Shop Logo" class="brand-logo-img">
-            </a>
-        </div>
-        
-        <div class="search-bar-container">
-            <input type="text" id="searchInput" placeholder="Search for a Toy...">
-                <button onclick="searchToys()" class="search-icon-btn">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-            </button>
+            <img src="images/nav_logo.png" alt="Clyde's Toy Shop Logo" class="brand-logo-img">
         </div>
 
-        <div class="nav-right">
-            <button class="nav-btn">
+        <div class="admin-nav-title-container">
+            <h1 class="admin-title-text">Toy Shop Admin Dashboard</h1>
+        </div>
+
+        <div class="admin-nav-right">
+            <div class="user-profile-info">
                 <i class="fa-solid fa-user"></i>
-                Login / Signup
-            </button>
-            <button class="nav-btn cart-btn">
-                <i class="fa-solid fa-cart-shopping" style="margin-right: 8px;"></i>
-                Cart
+                <span id="welcome-user"></span>
+            </div>
+            <button id="logout-btn" class="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
             </button>
         </div>
     </header>
 
-    <!-- CAROUSEL BANNER -->
-    <section class="carousel-section" id="carouselBanner">
-        <div class="carousel-dots">
-            <span class="dot active" onclick="changeSlide(0)"></span>
-            <span class="dot" onclick="changeSlide(1)"></span>
-            <span class="dot" onclick="changeSlide(2)"></span>
-        </div>
-    </section>
+    <main class="admin-container">
+        <!-- Add / Edit Toy Section -->
+        <section class="admin-card">
+            <h2 id="form-title">
+                Add New Toy
+            </h2>
+            <form id="add-toy-form" class="toy-form">
+                <input
+                    type="text"
+                    id="toy-title"
+                    placeholder="Title"
+                    required>
 
-    <!-- MAIN CONTENT -->
-    <main class="main-content">
-        <!-- Search Header -->
-        <div class="section-header">
-            <h2 id="sectionTitle">Toys</h2>
-            <p id="resultsCount" class="results-count"></p>
-                <!-- Show All Toys Button -->
-                <button id="showAllBtn" class="secondary show-all-inline-btn" style="display: none;" onclick="loadToys()">Show all Toys</button>
-        </div>
+                <input
+                    type="text"
+                    id="toy-brand"
+                    placeholder="Brand"
+                    required>
 
-    <!-- Hidden error banner -->
-    <div id="error-banner" class="error-banner" style="display: none;">
-        <span id="error-message">Whoops! The toy boy won't open, please check your data or internet connection.</span>
+                <input
+                    type="number"
+                    id="toy-year"
+                    placeholder="Year"
+                    required>
+
+                <select
+                    id="toy-genre"
+                    class="admin-select"
+                    required>
+                    <option value="" disabled selected>Select Genre</option>
+                    <option value="Action Figures">Action Figures</option>
+                    <option value="Board Games">Board Games</option>
+                    <option value="Building Sets & Blocks">Building Sets & Blocks</option>
+                    <option value="Collectibles">Collectibles</option>
+                    <option value="Dolls & Plush">Dolls & Plush</option>
+                    <option value="Educational & STEM">Educational & STEM</option>
+                    <option value="Puzzles">Puzzles</option>
+                    <option value="RC & Vehicles">RC & Vehicles</option>
+                    <option value="Sports & Outdoor">Sports & Outdoor</option>
+                    <option value="Other">Other</option>
+                </select>
+
+                <input
+                    type="number"
+                    step="0.01"
+                    id="toy-price"
+                    placeholder="Price (₱)"
+                    required>
+
+                <input
+                    type="number"
+                    id="toy-stock"
+                    placeholder="Stock Quantity"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-image"
+                    placeholder="Image URL filename"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-rating"
+                    placeholder="Rating (e.g., 4.8)"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-age"
+                    placeholder="Age Range"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-dimensions"
+                    placeholder="Dimensions"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-height"
+                    placeholder="Height"
+                    required>
+
+                <input
+                    type="text"
+                    id="toy-weight"
+                    placeholder="Weight"
+                    required>
+
+                <textarea
+                    id="toy-desc"
+                    placeholder="Description"
+                    required></textarea>
+
+                <button
+                    type="submit"
+                    id="form-submit-btn"
+                    class="add-toy-btn">
+                    Add Toy to Database
+                </button>
+
+                <button
+                    type="button"
+                    id="cancel-edit-btn"
+                    onclick="cancelEdit()"
+                    class="cancel-edit-btn hidden">
+                    Cancel Edit
+                </button>
+            </form>
+        </section>
+
+        <!-- Toy Inventory -->
+        <section class="admin-card inventory-card">
+            <div class="admin-section-header">
+                <h2>Existing Toy Inventory</h2>
+                <span id="inventory-page-info" class="inventory-page-info">Showing 0 of 0 toys</span>
+            </div>
+
+            <div class="inventory-table-wrapper">
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Title</th>
+                            <th>Brand</th>
+                            <th>Price</th>
+                            <th>Stock</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="toy-table-body">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div id="inventory-pagination" class="inventory-pagination hidden">
+                <button type="button" id="prev-page-btn" class="page-nav-btn">
+                    <i class="fa-solid fa-chevron-left"></i> Prev
+                </button>
+                <div id="page-numbers" class="page-numbers"></div>
+                <button type="button" id="next-page-btn" class="page-nav-btn">
+                    Next <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- Order Status Management -->
+        <section class="admin-card">
+            <h2>Manage Customer Orders</h2>
+
+            <div class="admin-order-grid">
+                <div class="admin-order-field">
+                    <label for="admin-order-id" class="admin-field-label">Order ID</label>
+                    <input
+                        type="number"
+                        id="admin-order-id"
+                        placeholder="Enter Order ID (e.g., 1)"
+                        min="1">
+                </div>
+
+                <div class="admin-order-field">
+                    <label for="admin-order-status" class="admin-field-label">Order Status</label>
+                    <select id="admin-order-status" class="admin-select">
+                        <option value="pending">pending</option>
+                        <option value="paid">paid</option>
+                        <option value="shipped">shipped</option>
+                        <option value="completed">completed</option>
+                        <option value="cancelled">cancelled</option>
+                    </select>
+                </div>
+
+                <div class="admin-order-actions">
+                    <button type="button" id="lookup-order-btn" class="order-lookup-btn">
+                        <i class="fa-solid fa-magnifying-glass"></i> Lookup Order
+                    </button>
+                    <button type="button" id="update-order-status-btn" class="order-update-btn">
+                        <i class="fa-solid fa-floppy-disk"></i> Update Status
+                    </button>
+                </div>
+            </div>
+
+            <div id="admin-order-preview" class="admin-order-preview hidden"></div>
+        </section>
+    </main>
+
+    <!-- ERROR MODAL OVERLAY -->
+    <div id="error-modal" class="toy-details-modal hidden">
+        <div class="toy-details-container error-modal-container">
+            <div class="toy-details-header">
+                <h2>Validation Error</h2>
+                <button type="button" class="toy-details-close" onclick="closeErrorModal()">&times;</button>
+            </div>
+            <div class="toy-details-content error-modal-content">
+                <div class="error-card-box clean-error-box">
+                    <i class="fa-solid fa-triangle-exclamation error-modal-icon"></i>
+                    <h3 id="error-modal-title">Whoops! Something went wrong.</h3>
+                    <p id="error-modal-message">Error details go here...</p>
+                </div>
+            </div>
+            <div class="toy-details-footer">
+                <button type="button" class="toy-details-button error-modal-btn" onclick="closeErrorModal()">Okay</button>
+            </div>
+        </div>
     </div>
 
-    <!-- 4-ITEM GRID LAYOUT -->
-    <section>
-        <div id="toyList" class="toy-grid">
-            Loading toys...
+    <!-- SUCCESS MODAL OVERLAY -->
+    <div id="success-modal" class="toy-details-modal hidden">
+        <div class="toy-details-container success-modal-container">
+            <div class="toy-details-header">
+                <h2>Success</h2>
+                <button type="button" class="toy-details-close" onclick="closeSuccessModal()">&times;</button>
+            </div>
+            <div class="toy-details-content success-modal-content">
+                <div class="success-box">
+                    <i class="fa-solid fa-circle-check success-modal-icon"></i>
+                    <h3 id="success-modal-title">Success!</h3>
+                    <p id="success-modal-message">Toy successfully saved to the database.</p>
+                </div>
+            </div>
+            <div class="toy-details-footer">
+                <button type="button" class="toy-details-button success-modal-btn" onclick="closeSuccessModal()">Okay</button>
+            </div>
         </div>
-    </section>
-</main>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL OVERLAY -->
+    <div id="delete-confirm-modal" class="toy-details-modal hidden">
+        <div class="toy-details-container error-modal-container">
+            <div class="toy-details-header">
+                <h2>Caution</h2>
+                <button type="button" class="toy-details-close" onclick="closeDeleteModal()">&times;</button>
+            </div>
+            <div class="toy-details-content error-modal-content">
+                <div class="error-card-box clean-error-box">
+                    <i class="fa-solid fa-triangle-exclamation error-modal-icon"></i>
+                    <h3 id="delete-modal-title">Are you sure you want to delete this record?</h3>
+                    <p id="delete-modal-message" style="color: #6b7280; font-size: 0.95rem; margin: 0; word-break: break-word;">This action cannot be undone.</p>
+                </div>
+            </div>
+            <div class="toy-details-footer" style="display: flex; justify-content: flex-end; gap: 10px;">
+                <button type="button" class="toy-details-button" onclick="closeDeleteModal()" style="background: #6b7280;">Cancel</button>
+                <button type="button" class="toy-details-button" id="confirm-delete-btn" style="background: #e63946;">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toy Details Modal -->
+    <div id="toy-details-modal" class="toy-details-modal hidden">
+        <div class="toy-details-container">
+            <div class="toy-details-header">
+                <h2 id="details-title">
+                    Toy Details
+                </h2>
+
+                <button
+                    type="button"
+                    onclick="closeToyDetails()"
+                    class="toy-details-close">
+                    &times;
+                </button>
+            </div>
+
+            <div class="toy-details-content">
+                <div class="toy-details-grid">
+                    <div class="toy-detail-item">
+                        <span>ID</span>
+                        <p id="details-id"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Title</span>
+                        <p id="details-title-value"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Brand</span>
+                        <p id="details-brand"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Year</span>
+                        <p id="details-year"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Genre</span>
+                        <p id="details-genre"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Price</span>
+                        <p id="details-price"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Stock</span>
+                        <p id="details-stock"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Rating</span>
+                        <p id="details-rating"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Age Range</span>
+                        <p id="details-age"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Dimensions</span>
+                        <p id="details-dimensions"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Height</span>
+                        <p id="details-height"></p>
+                    </div>
+
+                    <div class="toy-detail-item">
+                        <span>Weight</span>
+                        <p id="details-weight"></p>
+                    </div>
+
+                    <div class="toy-detail-item toy-detail-full">
+                        <span>Image</span>
+                        <p id="details-image"></p>
+                    </div>
+
+                    <div class="toy-detail-item toy-detail-full">
+                        <span>Description</span>
+                        <p id="details-description"></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toy-details-footer">
+                <button
+                    type="button"
+                    onclick="closeToyDetails()"
+                    class="toy-details-button">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- FOOTER -->
     <footer>
-        <img src="images/nav_logo.png" alt="Clyde's Toy Shop Logo" class="brand-logo-img">
-        <p>&copy; 2026 Clyde's Toy Shop. All rights reserved.</p>
+        <img
+            src="images/nav_logo.png"
+            alt="Clyde's Toy Shop Logo"
+            class="brand-logo-img">
+
+        <p>
+            &copy; 2026 Clyde's Toy Shop. All rights reserved.
+        </p>
     </footer>
 
     <script src="config.js"></script>
-    <script src="app.js"></script>
+    <script src="admin.js"></script>
+
 </body>
 </html>

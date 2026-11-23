@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Dashboard - Clyde's Toy Shop</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body class="admin-page">
+
+    <!-- TOP NAVBAR -->
+    <nav class="admin-navbar">
+        <div class="nav-left">
+            <img src="images/nav_logo.png" alt="Clyde's Toy Shop Logo" class="brand-logo-img">
+        </div>
+
+        <div class="admin-nav-title-container">
+            <h1 class="admin-title-text">SUPER ADMIN ACCOUNT MANAGER</h1>
+        </div>
+
+        <div class="admin-nav-right">
+            <div class="user-profile-info">
+                <i class="fa-solid fa-user-shield"></i>
+                <span id="welcome-user">Super Admin</span>
+            </div>
+            <button type="button" id="logout-btn" class="logout-btn">
+                <i class="fa-solid fa-right-from-bracket"></i> Logout
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTAINER -->
+    <main class="admin-container">
+
+        <!-- CREATE ACCOUNT CARD -->
+        <section class="admin-card">
+            <h2>Create New Account (Auto-Hashed Password)</h2>
+            <form id="create-account-form" class="super-admin-form">
+                <select id="new-account-role" required>
+                    <option value="" disabled selected>Select Account Role</option>
+                    <option value="customer">Customer User</option>
+                    <option value="staff">Staff Account</option>
+                </select>
+
+                <input
+                    type="text"
+                    id="new-account-username"
+                    placeholder="Username (min. 3 chars)"
+                    minlength="3"
+                    maxlength="50"
+                    required
+                >
+
+                <input
+                    type="email"
+                    id="new-account-email"
+                    placeholder="Email Address"
+                    maxlength="100"
+                    required
+                >
+
+                <input
+                    type="password"
+                    id="new-account-password"
+                    placeholder="Password (min. 6 chars — hashed automatically)"
+                    minlength="6"
+                    maxlength="255"
+                    required
+                >
+
+                <select id="new-account-status">
+                    <option value="true" selected>Status: Active</option>
+                    <option value="false">Status: Deactivated</option>
+                </select>
+
+                <button type="submit" id="create-account-submit-btn" class="add-toy-btn">
+                    <i class="fa-solid fa-user-plus"></i> Create Account
+                </button>
+            </form>
+        </section>
+
+        <!-- ALL STAFF ACCOUNTS TABLE -->
+        <section class="admin-card inventory-card">
+            <div class="super-admin-section-header">
+                <h2>All Staff Accounts</h2>
+                <button type="button" id="refresh-staff-btn" class="shop-secondary-btn">
+                    <i class="fa-solid fa-rotate-right"></i> Refresh Staff
+                </button>
+            </div>
+            <div class="inventory-table-wrapper">
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="staff-accounts-tbody">
+                        <tr>
+                            <td colspan="5" class="shop-loading">Loading staff accounts...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ALL CUSTOMER / USER ACCOUNTS TABLE -->
+        <section class="admin-card inventory-card">
+            <div class="super-admin-section-header">
+                <h2>All User Accounts (Customers)</h2>
+                <button type="button" id="refresh-customers-btn" class="shop-secondary-btn">
+                    <i class="fa-solid fa-rotate-right"></i> Refresh Users
+                </button>
+            </div>
+            <div class="inventory-table-wrapper">
+                <table class="inventory-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Username</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="customer-accounts-tbody">
+                        <tr>
+                            <td colspan="5" class="shop-loading">Loading customer accounts...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- RESET PASSWORD MODAL -->
+    <div id="reset-password-modal" class="toy-details-modal hidden">
+        <div class="toy-details-container error-modal-container">
+            <div class="toy-details-header">
+                <h2>Reset Account Password</h2>
+                <button type="button" id="close-reset-modal-btn" class="toy-details-close">&times;</button>
+            </div>
+            <form id="reset-password-form">
+                <div class="toy-details-content">
+                    <div class="toy-detail-item super-admin-modal-field">
+                        <span>Target Account</span>
+                        <p id="reset-target-label">—</p>
+                    </div>
+                    <div class="toy-detail-item super-admin-modal-field">
+                        <label for="reset-new-password" class="login-label">New Password (min. 6 chars)</label>
+                        <input
+                            type="password"
+                            id="reset-new-password"
+                            class="login-input"
+                            placeholder="Enter new password"
+                            minlength="6"
+                            maxlength="255"
+                            required
+                        >
+                    </div>
+                </div>
+                <div class="toy-details-footer super-admin-modal-actions">
+                    <button type="button" id="cancel-reset-password-btn" class="toy-details-button">Cancel</button>
+                    <button type="submit" class="add-toy-btn super-admin-inline-btn">
+                        <i class="fa-solid fa-key"></i> Save New Password
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SUCCESS MODAL (Matches Admin UI) -->
+    <div id="success-modal" class="toy-details-modal hidden">
+        <div class="toy-details-container success-modal-container">
+            <div class="toy-details-header">
+                <h2>Success</h2>
+                <button type="button" id="close-success-modal-x" class="toy-details-close">&times;</button>
+            </div>
+            <div class="toy-details-content success-modal-content">
+                <div class="success-box">
+                    <i class="fa-solid fa-circle-check success-modal-icon"></i>
+                    <h3 id="success-modal-title">Operation Complete</h3>
+                    <p id="success-modal-message">Changes saved successfully.</p>
+                </div>
+            </div>
+            <div class="toy-details-footer">
+                <button type="button" id="close-success-modal-btn" class="toy-details-button success-modal-btn">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ERROR MODAL (Matches Admin UI) -->
+    <div id="error-modal" class="toy-details-modal hidden">
+        <div class="toy-details-container error-modal-container">
+            <div class="toy-details-header">
+                <h2>Error</h2>
+                <button type="button" id="close-error-modal-x" class="toy-details-close">&times;</button>
+            </div>
+            <div class="toy-details-content error-modal-content">
+                <div class="clean-error-box">
+                    <i class="fa-solid fa-circle-exclamation error-modal-icon"></i>
+                    <h3 id="error-modal-title">Something went wrong</h3>
+                    <p id="error-modal-message">Please try again.</p>
+                </div>
+            </div>
+            <div class="toy-details-footer">
+                <button type="button" id="close-error-modal-btn" class="toy-details-button error-modal-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- LOGOUT CONFIRMATION MODAL -->
+    <div id="logout-modal" class="toy-details-modal hidden">
+        <div class="toy-details-container error-modal-container">
+            <div class="toy-details-header">
+                <h2>Confirm Logout</h2>
+                <button type="button" id="close-logout-modal-x" class="toy-details-close">&times;</button>
+            </div>
+            <div class="toy-details-content error-modal-content">
+                <div class="clean-error-box">
+                    <i class="fa-solid fa-right-from-bracket logout-modal-icon" style="color: #060b58;"></i>
+                    <h3>Sign out of Super Admin?</h3>
+                    <p>You will be redirected to the login page.</p>
+                </div>
+            </div>
+            <div class="toy-details-footer super-admin-modal-actions">
+                <button type="button" id="cancel-logout-btn" class="logout-cancel-btn">Cancel</button>
+                <button type="button" id="confirm-logout-btn" class="confirm-logout-btn">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="super_admin.js"></script>
+</body>
+</html>
