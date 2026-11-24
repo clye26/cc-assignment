@@ -1,5 +1,5 @@
 // API CONFIGURATION
-const GACHAPON_API_ENDPOINT = GACHAPON_CONFIG.GACHAPON_API_URL;
+const GACHAPON_API_URL = GACHAPON_CONFIG.GACHAPON_API_URL;
 const GACHAPON_API_KEY = GACHAPON_CONFIG.GACHAPON_API_KEY;
 
 // BUTTON SOUND EFFECTS CONFIGURATION
@@ -27,7 +27,7 @@ async function fetchMasterToys() {
         - Fetch toy data from cc-assignment website (main website with API) using the Header.
         */
 
-        const response = await fetch(GACHAPON_API_ENDPOINT, {
+        const response = await fetch(GACHAPON_API_URL, {
         headers: { "x-api-key": GACHAPON_API_KEY }
         });
         
