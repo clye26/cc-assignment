@@ -1,6 +1,10 @@
 # Environment and local config files
 .env
-config.js
+
+# Generated configuration files
+/config.js
+/quiz/config.js
+/gashapon/config.js
 
 # Python cache and virtual environments
 __pycache__/

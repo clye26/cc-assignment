@@ -1,6 +1,6 @@
 // API CONFIGURATION
-const QUIZ_API_URL = QUIZ_CONFIG.API_URL;
-const QUIZ_API_KEY = QUIZ_CONFIG.API_KEY;
+const QUIZ_API_ENDPOINT = QUIZ_CONFIG.QUIZ_API_URL;
+const QUIZ_API_KEY = QUIZ_CONFIG.QUIZ_API_KEY;
 
 let allToys = [];
 let gameToys = [];
@@ -28,8 +28,8 @@ async function startGame() {
         - Fetch toy data from cc-assignment website (main website with API) using the Header.
         */
 
-        const response = await fetch(QUIZ_API_URL, {
-            headers: { "x-api-key": QUIZ_API_KEY }
+        const response = await fetch(QUIZ_API_ENDPOINT, {
+        headers: { "x-api-key": QUIZ_API_KEY }
         });
         
         if (!response.ok) {
