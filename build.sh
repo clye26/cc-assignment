@@ -16,8 +16,8 @@ mkdir -p quiz
 
 cat <<EOF > quiz/config.js
 const QUIZ_CONFIG = {
-    API_URL: '${QUIZ_API_URL}',
-    API_KEY: '${QUIZ_API_KEY}'
+    QUIZ_API_URL: '${QUIZ_API_URL}',
+    QUIZ_API_KEY: '${QUIZ_API_KEY}'
 };
 EOF
 
@@ -26,8 +26,8 @@ mkdir -p gashapon
 
 cat <<EOF > gashapon/config.js
 const GACHAPON_CONFIG = {
-    API_URL: '${GACHAPON_API_URL}',
-    API_KEY: '${GACHAPON_API_KEY}'
+    GACHAPON_API_URL: '${GACHAPON_API_URL}',
+    GACHAPON_API_KEY: '${GACHAPON_API_KEY}'
 };
 EOF
 
