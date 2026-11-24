@@ -2,10 +2,6 @@
 const QUIZ_API_URL = QUIZ_CONFIG.QUIZ_API_URL;
 const QUIZ_API_KEY = QUIZ_CONFIG.QUIZ_API_KEY;
 
-console.log("QUIZ CONFIG:", QUIZ_CONFIG);
-console.log("QUIZ API URL:", QUIZ_API_URL);
-console.log("QUIZ API KEY EXISTS:", Boolean(QUIZ_API_KEY));
-
 let allToys = [];
 let gameToys = [];
 let currentRound = 0;
