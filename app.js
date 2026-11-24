@@ -897,6 +897,11 @@ window.addEventListener("DOMContentLoaded", () => {
         currentUser &&
         userId;
 
+    const playGamesDropdown = document.getElementById("playGamesDropdown");
+    if (playGamesDropdown) {
+        playGamesDropdown.classList.toggle("hidden", !validCustomerSession);
+    }
+
     /*
      * Staff login
      */
@@ -958,6 +963,28 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 }
 });
+
+// ============================================================
+// GAMEPLAY DROPDOWN MENU
+// ============================================================
+
+function togglePlayGamesMenu(event) {
+    if (event) event.stopPropagation();
+    const menu = document.getElementById("playGamesMenu");
+    if (menu) {
+        menu.classList.toggle("hidden");
+    }
+}
+
+document.addEventListener("click", (event) => {
+    const dropdown = document.getElementById("playGamesDropdown");
+    const menu = document.getElementById("playGamesMenu");
+    if (dropdown && menu && !menu.classList.contains("hidden") && !dropdown.contains(event.target)) {
+        menu.classList.add("hidden");
+    }
+});
+
+window.togglePlayGamesMenu = togglePlayGamesMenu;
 
 // ============================================================
 // CUSTOMER FEEDBACK MODAL

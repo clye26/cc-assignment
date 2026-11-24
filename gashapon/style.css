@@ -1,0 +1,409 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    background: #e4e3e3;
+    color: #222;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; 
+}
+
+/* TOP NAVIGATION BAR */
+.navbar {
+    background: #060b58;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+
+/* BACK ICON */
+.back-icon-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: background-color 0.15s ease, transform 0.15s ease;
+}
+
+.back-icon-btn:hover {
+    background-color: #ffa100;
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+/* INVENTORY BUTTON */
+.inventory-nav-btn {
+    background: transparent;
+    border: none; 
+    border-radius: 10px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease; 
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.inventory-nav-btn i {
+    color: #ffa100;
+}
+
+.inventory-nav-btn:hover {
+    background: #ffa100;
+    color: #222;
+    transition:cubic-bezier(1, 0, 0, 1)
+}
+
+.inventory-nav-btn:hover i {
+    color: #222;
+    transition:cubic-bezier(1, 0, 0, 1)
+}
+
+button:hover {
+    transform: scale(1.02);
+}
+
+button:active {
+    transform: scale(0.98);
+}
+
+/* MAIN GAME */
+.gacha-container {
+    text-align: center;
+}
+
+.gacha-container h1 {
+    font-size: 25px;
+    font-weight: 900;
+    color: #1a1a1a;
+    margin-top: 40px;
+    letter-spacing: 5px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.gacha-container h3 {
+    font-size: 14px;
+    font-weight: 350;
+    color: #1a1a1a;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.machine-wrapper {
+    position: relative;
+    width: 275px;
+    height: 624px;
+    background-image: url('gashapon-machine.png'); 
+    background-size: cover;
+    background-position: center;
+    margin: 20px auto;
+    border-radius: 15px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.7);
+    border: 3px solid #fff;
+    margin-bottom: 70px;
+}
+
+.machine-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+/* CRANKER BUTTON */
+.crank {
+    position: absolute;
+    top: 57.3%; 
+    left: 29.5%;
+    width: 115px;
+    height: 115px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+.crank-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.6s ease-in-out;
+    transform-origin: center center;
+}
+
+.spin .crank-img {
+    transform: rotate(360deg);
+}
+
+/* MODALS */
+.modal {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100vw; 
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.85);
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    visibility: hidden; 
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, visibility 0.3s ease-in-out;
+}
+
+.modal.active {
+    visibility: visible;
+    opacity: 1;
+}
+
+.modal-content {
+    background: #16213e;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    width: 480px;
+    max-width: 90vw;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+    color: #fff;
+    transform: scale(0.7);
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.modal.active .modal-content {
+    transform: scale(1);
+}
+
+.modal-content h1 {
+    font-size: 32px;
+    font-weight: bolder;
+    color: #ffa100;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.modal-toy-img-container {
+    width: 160px;
+    height: 160px;
+    margin: 20px auto;
+    background: rgb(255, 255, 255);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 10px;
+}
+
+.modal-toy-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+.modal-content h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: rgb(221, 221, 221);
+    margin: 10px 0 5px 0;
+}
+
+.modal-content .rarity {
+    font-size: 14px;
+    color: #a0aec0;
+    margin-bottom: 15px;
+}
+
+.awesome-btn {
+    background: #ffa100; 
+    color: #1a1a1a; 
+    font-size: 16px;
+    font-weight: 700;
+    padding: 14px 20px;
+    margin: 20px auto 0 auto; 
+    width: 100%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: none; 
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.awesome-btn:hover {
+    background: #704c08;
+    color: #0f0b02;
+    transform: translateY(-2px);
+}
+
+.awesome-btn:active {
+    transform: translateY(0);
+}
+
+/* INVENTORY AREA */
+.inventory-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-height: 250px;
+    overflow-y: auto;
+    margin: 15px 0;
+    padding: 5px;
+}
+
+.inv-item {
+    background-color: #fff;
+    border: 1px solid #fff;
+    border-radius: 8px;
+    padding: 5px;
+    text-align: center;
+}
+
+.inv-item h3 {
+    font-size: 12px;
+    font-weight: 600;
+    color: rgb(0, 0, 0);
+    margin: 10px 0 5px 0;
+}
+
+.inv-item p {
+    font-size: 10px;
+    font-weight: 400;
+    color: rgb(0, 0, 0);
+    margin: 10px 0 5px 0;
+}
+
+.inv-item img {
+    width: 50px;
+    height: 50px;
+}
+
+.close-inventory-btn {
+    background: #ffa100; 
+    color: #1a1a1a; 
+    font-size: 16px;
+    font-weight: 700;
+    padding: 14px 20px;
+    margin: 20px auto 0 auto; 
+    width: 100%; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    border: none; 
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.close-inventory-btn:hover {
+    background: #704c08;
+    color: #0f0b02;
+    transform: translateY(-2px);
+}
+
+.close-inventory-btn:active {
+    transform: translateY(0);
+}
+
+/* FOOTER SECTION */
+footer {
+    text-align: center;
+    padding: 30px;
+    color: #8f8f8f;
+    background: #060b58;
+    margin-top: auto; 
+    border-top: 1px solid #ddd;
+}
+
+/* ERROR HANDLING STYLING */
+.error-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.75); /* Darkens the background slightly */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; /* Ensures it floats on top of everything */
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+.error-card-box {
+    background: #ffffff;
+    border: 4px solid #e60d0d8a;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    text-align: center;
+    max-width: 420px;
+    width: 90%;
+}
+
+.error-card-box i {
+    font-size: 2.5rem;
+    color: #e63946;
+    margin-bottom: 12px;
+}
+
+.error-card-box h2 {
+    font-size: 1.25rem;
+    color: #1f2937;
+    margin-bottom: 8px;
+}
+
+.error-card-box p {
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
+/* RESPONSIVENESS AREA */
+@media (max-width: 1036px) {
+    .navbar {
+        flex-direction: column;
+        align-items: center; 
+        padding: 15px;
+    }
+
+    .nav-left{
+        width: 100%;
+        display: flex;
+        justify-content: center; 
+        margin-bottom: 10px;    
+    }
+}

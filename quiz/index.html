@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clyde's Toy Shop Quiz</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="navbar">
+        <div class="nav-left">
+            <a href="../index.html" class="back-icon-btn" title="Back to Toy Shop" aria-label="Back to Toy Shop">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <img src="images/nav_logo.png" alt="Clyde's Toy Shop Logo" class="brand-logo-img">
+        </div>
+
+        <div id="score-board">
+            <div class="score-badge">
+                <i class="fa-solid fa-trophy"></i> Score: <span id="score">0</span>
+            </div>
+            <div class="round-badge">
+                <i class="fa-solid fa-layer-group"></i> Round: <span id="round">1</span>/10
+            </div>
+        </div>
+    </header>
+
+    <div id="start-screen" class="start-container">
+        <h1>Guess the Toy Price!</h1>
+        <p>Test your knowledge on Clyde's Toy Shop inventory!</p>
+
+        <!-- When clicked, trigger "startGame()" function on JS -->
+        <button onclick="startGame()">Play Game</button>
+    </div>
+
+    <div id="quiz-screen" class="game-card" style="display: none;">
+        <h1>Guess the Toy Price?</h1>
+        <h3 id="toy-title">Loading toy...</h3>
+        <div class="image-container">
+            <div id="loading-spinner" style="display: none;">
+                <i class="fa-solid fa-spinner fa-spin" style="font-size: 2.5rem; color: #ffa100; margin-bottom: 12px;"></i>
+            </div>
+            <img id="toy-image" src="" alt="Toy Image">
+        </div>
+        
+        <div class="buttons-grid">
+            <button id="btn-0" onclick="checkAnswer(0)"><i class="fa-solid fa-play"></i> <span class="btn-text"></span></button>
+            <button id="btn-1" onclick="checkAnswer(1)"><i class="fa-solid fa-diamond"></i> <span class="btn-text"></span></button>
+            <button id="btn-2" onclick="checkAnswer(2)"><i class="fa-solid fa-circle"></i> <span class="btn-text"></span></button>
+            <button id="btn-3" onclick="checkAnswer(3)"><i class="fa-solid fa-square"></i> <span class="btn-text"></span></button>
+        </div>
+        
+        <div id="feedback"></div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <img src="images/nav_logo.png" alt="Clyde's Toy Shop Logo" class="brand-logo-img">
+        <p>&copy; 2026 Clyde's Toy Shop. All rights reserved.</p>
+    </footer>
+
+    <!-- TRIPLE T JUMPSCARE OVERLAY -->
+    <div id="ttt-overlay" class="jumpscare-overlay" style="display: none;">
+        <!-- Background Video -->
+        <video id="ttt-video" autoplay muted playsinline>
+            <source src="videos/jumpscare.mp4" type="video/mp4">
+        </video>
+        <!-- Warning Text on Top -->
+        <h2 id="ttt-warning-text">TRIPLE T IS CLOSING IN...</h2>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

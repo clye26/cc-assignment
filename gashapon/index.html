@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clyde's Toy Shop Gachapon Machine</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <!-- TOP NAVIGATION BAR -->
+    <header class="navbar">
+        <div class="nav-left">
+            <a href="../index.html" class="back-icon-btn" title="Back to Toy Shop" aria-label="Back to Toy Shop">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <img src="images/nav_logo.png" alt="Clyde's Toy Shop Logo" class="brand-logo-img">
+        </div>
+
+        <div class="nav-right">
+            <button class="inventory-nav-btn" onclick="openInventory()">
+                <i class="fa-solid fa-suitcase-rolling"></i> Inventory (<span id="inv-count">0</span>)
+            </button>
+        </div>
+    </header>
+
+    <!-- MAIN GAMEPLAY -->
+    <div class="gacha-container">
+        <h1>BANDAI GASHAPON x CLYDE'S TOY SHOP</h1>
+        <h3>Try out the virtual Gachapon Machine from the Bandai and Clyde's Toy Shop collaboration!</h3>
+        
+        <div class="machine-wrapper">
+            <img src="images/Gachapon_Front.png" alt="Bandai Gashapon Machine" class="machine-img">
+
+            <!-- CRANKER BUTTON -->
+            <!-- If user presses the button, trigger the "pullGacha() function on JS." -->
+            <div id="crank" class="crank" onclick="pullGacha()">
+                <img src="images/Gachapon_Crank.png" alt="Gachapon Crank" class="crank-img">
+            </div>
+        </div>
+    </div> 
+
+
+    <!-- TOY WON POPUP UI -->
+    <div id="reward-modal" class="modal">
+        <div class="modal-content">
+            <h1>You Got a Toy!</h1>
+        <div class="modal-toy-img-container">
+            <img id="reward-img" src="" alt="Toy">
+        </div>
+            <h3 id="reward-title">Toy Name</h3>
+            <p id="reward-rarity" class="rarity">Common</p>
+            <button class="awesome-btn" onclick="closeModal()">Awesome!</button>
+        </div>
+    </div>
+
+    <!-- INVENTORY -->
+    <div id="inventory-modal" class="modal">
+        <div class="modal-content inventory-box">
+            <h2>Your Toy Inventory</h2>
+                <div id="inventory-grid" class="inventory-grid">
+                </div>
+            <button class="close-inventory-btn" onclick="closeInventory()">Close</button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <img src="images/nav_logo.png" alt="Clyde's Toy Shop Logo" class="brand-logo-img">
+        <p>&copy; 2026 Clyde's Toy Shop. All rights reserved.</p>
+    </footer>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
